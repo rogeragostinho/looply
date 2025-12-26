@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:looply/ui/core/ui/page_app_bar.dart';
 
-class TopicsPage extends StatelessWidget {
+class CalendarPage extends StatelessWidget {
 
-  const TopicsPage({super.key});
+  const CalendarPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PageAppBar(title: "Topics"),
-      body: Center(child: Text("Topics")),
+      appBar: PageAppBar(title: "Calendar"),
+      body: Center(child: Text("Calendar"),)
     );
   }
 }

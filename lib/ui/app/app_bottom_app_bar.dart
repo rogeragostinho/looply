@@ -16,7 +16,7 @@ class _AppBottomAppBarState extends State<AppBottomAppBar> {
 
     return NavigationBar(
       onDestinationSelected: (int index) {
-        
+        appState.chancePageIndex(index);
       },
       indicatorColor: Colors.amber,
       selectedIndex: appState.currentPageIndex,
@@ -40,21 +40,5 @@ class _AppBottomAppBarState extends State<AppBottomAppBar> {
         ),
       ],
     );
-    
-    
-     /*BottomAppBar(
-      height: 80.0,
-      color: Colors.blue,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          ElevatedButton(onPressed: () => {}, child: Icon(Icons.home)),
-          ElevatedButton(onPressed: () => {}, child: ),
-          
-          ElevatedButton(onPressed: () => {}, child: ),
-          ElevatedButton(onPressed: () => {}, child: ),
-        ],
-      )
-    );*/
   }
 }
