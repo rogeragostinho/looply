@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:looply/ui/app/app_bottom_app_bar.dart';
 import 'package:looply/ui/app/app_scaffold.dart';
 import 'package:looply/ui/core/app_state.dart';
-import 'package:looply/ui/pages/home_page.dart';
 import 'package:provider/provider.dart';
 
 class MainApp extends StatelessWidget {
