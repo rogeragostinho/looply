@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class Revision {
   DateTime date;
   Status status;

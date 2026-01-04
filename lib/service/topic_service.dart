@@ -1,15 +1,18 @@
+//import 'package:looply/model/revision.dart';
 import 'package:looply/model/revision.dart';
 import 'package:looply/model/revision_cycle.dart';
 import 'package:looply/model/tag.dart';
 import 'package:looply/model/topic.dart';
+//import 'package:looply/model/topic.dart';
+import 'package:looply/repository/topic_repository.dart';
 
 class TopicService {
-  //TopicRepository? repository;
-  //TopicService() : repository = TopicRepository();
 
-  /*final */List<Topic> list = [];
+  TopicRepository? _repository;
 
-  TopicService._privateConstructor();
+  TopicService._privateConstructor() {
+    _repository = TopicRepository();
+  }
 
   static final TopicService _instance = TopicService._privateConstructor();
 
@@ -17,24 +20,24 @@ class TopicService {
 
   void create({required String name, required DateTime studiedOn, required RevisionCycle revisionCycle, required List<Tag> tags}) {
 
-    int id = list.isEmpty ? 1 : list.length + 1;
-    List<Revision> revisions = [];
+    
 
-    for (int i = 0; i < revisionCycle.cycle.length; i++) {
-      revisions.add(Revision(
-        date: studiedOn.add(Duration(days: revisionCycle.cycle.elementAt(i))),
-        status: Status.pendente
-      ));
-    }
+    List<Revision> revisions = [
+      Revision(date: DateTime.now(), status: Status.pendente),
+      Revision(date: DateTime.now().add(Duration(days: 7)), status: Status.pendente),
+      Revision(date: DateTime.now().add(Duration(days: 30)), status: Status.pendente),
+      Revision(date: DateTime.now().add(Duration(days: 60)), status: Status.pendente),
+    ];
 
-    list.add(Topic(id, name, revisionCycle, tags, studiedOn, revisions));
+    _repository!.insertTopic(Topic(name, revisionCycle, tags, studiedOn, revisions));
   }
 
-  List<Topic> getAll() {
-    return list;
+  Future<List<Topic>> getAll() async{
+    
+    return await _repository!.getAllTopics();
   }
 
-  Topic get(int id) {
+  /*Topic get(int id) {
     return list.elementAt(id);
   }
 
@@ -44,6 +47,6 @@ class TopicService {
 
   void removeAll() {
   list = [];
-}
+}*/
 }
 

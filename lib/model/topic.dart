@@ -6,42 +6,44 @@ import 'package:looply/model/revision_cycle.dart';
 import 'package:looply/model/tag.dart';
 
 class Topic {
-  int id;
+  int? id;
   String name;
-  DateTime studiedOn;
   RevisionCycle revisionCycle;
   List<Tag> tags;
+  DateTime studiedOn;
+  List<Revision> revisions;
   Note? note;
   List<String>? imagesUrl;
-  List<Revision> revisions;
 
   Topic(
-    this.id,
     this.name,
     this.revisionCycle,
     this.tags,
     this.studiedOn,
     this.revisions, {
+    this.id,
     this.note,
     this.imagesUrl,
   });
 
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
+    var map = {
       'name': name,
-      'studiedOn': studiedOn.toIso8601String(),
+      'studied_on': studiedOn.toIso8601String(),
 
       'revision_cycle_json': jsonEncode(revisionCycle.toJson()),
       'tags_json': jsonEncode(tags.map((t) => t.toJson()).toList()),
       'note_json': note != null ? jsonEncode(note!.toJson()) : null,
       'revisions_json': jsonEncode(revisions.map((r) => r.toJson()).toList())
     };
+
+     if (id != null) map['id'] = id.toString(); // só incluir se já existir (update)
+
+     return map;
   }
 
   factory Topic.fromMap(Map<String, dynamic> map) {
     return Topic(
-      map['id'],
       map['name'],
       RevisionCycle.fromJson(jsonDecode(map['revision_cycle_json'])),
       (jsonDecode(map['tags_json']) as List)
@@ -51,6 +53,7 @@ class Topic {
       (jsonDecode(map['revisions_json']) as List)
         .map((e) => Revision.fromJson(e))
         .toList(),
+      id: map['id'],
       note: map['note_json'] != null 
         ? Note.fromJson(jsonDecode(map['note_json']))
         : null,

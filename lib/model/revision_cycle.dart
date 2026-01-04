@@ -1,27 +1,35 @@
 import 'dart:convert';
 
 class RevisionCycle {
-  int id;
+  int? id;
   String name;
   List<int> cycle;
 
-  RevisionCycle(this.id, this.name, this.cycle);
+  RevisionCycle(this.name, this.cycle, {this.id});
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic> {
-      'id': id,
+      //'id': id,
       'name': name,
-      'cycle': jsonEncode(cycle)
+      'cycle_json': jsonEncode(cycle)
     };
 
     return map;
   }
 
   factory RevisionCycle.fromJson(Map<String, dynamic> json) {
-    return RevisionCycle(
-      json['id'],
-      json['name'],
-      List<int>.from(jsonDecode(json['cycle'])),
-    );
+  var cycleJson = json['cycle_json'];
+  List<int> cycles = [];
+
+  if (cycleJson != null) {
+    cycles = List<int>.from(jsonDecode(cycleJson));
   }
+
+  return RevisionCycle(
+    json['name'] ?? '',
+    cycles,
+    id: json['id'],
+  );
+}
+
 }

@@ -1,32 +1,40 @@
 import 'package:looply/model/revision_cycle.dart';
+import 'package:looply/repository/revision_cycle_repository.dart';
 
 class RevisionCycleService {
   List<RevisionCycle> list = [];
 
   RevisionCycleService._privateConstructor() {
-    list.add(RevisionCycle(1, "Default", [1, 7, 30, 60]));
+    list.add(RevisionCycle("Default", [1, 7, 30, 60]));
   }
 
   static final RevisionCycleService _instance = RevisionCycleService._privateConstructor();
 
   static RevisionCycleService get instance => _instance;
 
-  void create(String name, List<int> cycles) {
-    int id = list.length+1;
+  void create(String name, List<int> cycle) {
+    /*int id = list.length+1;
 
-    list.add(RevisionCycle(id, name, cycles));
+    list.add(RevisionCycle(id, name, cycles));*/
+
+    var repository = RevisionCycleRepository();
+
+    repository.create(RevisionCycle(name, cycle));
   }
 
-  RevisionCycle get(int id) {
-    try {
+  Future<RevisionCycle?> get(int id) async{
+    /*try {
       return list.firstWhere((e) => e.id == id);
     } catch (_) {
       return list.firstWhere((e) => e.id == 1);
-    }
+    }*/
+    var repository = RevisionCycleRepository();
+    return await repository.getTopicById(id);
   }
 
-  List<RevisionCycle> getAll() {
-    return list;
+  Future<List<RevisionCycle>> getAll() async{
+    var repository = RevisionCycleRepository();
+    return await repository.getAllTopics();
   }
 
   void remove(int id) {

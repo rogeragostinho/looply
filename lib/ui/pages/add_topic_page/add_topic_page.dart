@@ -1,6 +1,4 @@
- 
- 
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:looply/model/revision_cycle.dart';
 import 'package:looply/service/revision_cycle_service.dart';
  
@@ -16,7 +14,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
 
   final formTopicController = TextEditingController();
   final formStudiedOnController = TextEditingController();
-  int? idRevisionCycle = RevisionCycleService.instance.get(1).id;
+  //int? idRevisionCycle = RevisionCycleService.instance.get(1).id;
   DateTime studiedOn = DateTime.now();
 
 
@@ -26,7 +24,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
     setState(() {
       if (pickedDate != null) {
         studiedOn = pickedDate;
-        formStudiedOnController.text ='${studiedOn!.day}/${studiedOn!.month}/${studiedOn!.year}';
+        formStudiedOnController.text ='${studiedOn.day}/${studiedOn.month}/${studiedOn.year}';
 
         //formStudiedOnController.text  studiedOn.toString();
       }
@@ -37,7 +35,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
   @override
   void initState() {
     super.initState();
-    formStudiedOnController.text ='${studiedOn!.day}/${studiedOn!.month}/${studiedOn!.year}';
+    formStudiedOnController.text ='${studiedOn.day}/${studiedOn.month}/${studiedOn.year}';
   }
 
   @override
@@ -96,23 +94,23 @@ class _AddTopicPageState extends State<AddTopicPage> {
               SizedBox(height: 25.0,),
               Text("Revision Cycle"),
               RadioGroup<int>(
-                groupValue: idRevisionCycle,
+                //groupValue: idRevisionCycle,
                 onChanged: (int? value) {
                   setState(() {
-                    idRevisionCycle = value;  
+                    //idRevisionCycle = value;  
                   });
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text("selected: $idRevisionCycle"),
-                    for (RevisionCycle revision in RevisionCycleService.instance.getAll())
+                    //Text("selected: $idRevisionCycle"),
+                    /*for (RevisionCycle revision in RevisionCycleService.instance.getAll())
                       Row(
                         children: [
-                          Radio<int>(value: revision.id),
+                          Radio<int>(value: revision.id!),
                           Text("${revision.name} ${revision.cycle.toString()}")
                         ],
-                      )
+                      )*/
                   ],
                 ),
                 
