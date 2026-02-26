@@ -1,11 +1,11 @@
 //import 'package:flutter/material.dart';
 
 class Tag {
-  int id;
+  int? id;
   String name;
   //int colorARGB;
 
-  Tag(this.id, this.name/*, this.colorARGB*/);
+  Tag(this.name/*, this.colorARGB*/, {this.id});
 
   //Color get color => Color(colorARGB);
 
@@ -17,8 +17,8 @@ class Tag {
 
   factory Tag.fromJson(Map<String, dynamic> json) {
     return Tag(
-      json['id'],
       json['name'],
+      id:json['id'],
       //json['colorARGB'],
     );
   }
