@@ -7,7 +7,6 @@ import 'package:looply/model/topic.dart';
 import 'package:looply/repository/topic_repository.dart';
 
 class TopicService {
-
   TopicRepository? _repository;
 
   TopicService._privateConstructor() {
@@ -18,23 +17,32 @@ class TopicService {
 
   static TopicService get instance => _instance;
 
-  void create({required String name, required DateTime studiedOn, required RevisionCycle revisionCycle, required List<Tag> tags}) {
+  Future<void> create({
+    required String name,
+    required DateTime studiedOn,
+    required RevisionCycle revisionCycle,
+    required List<Tag> tags,
+  }) async {
+    final revisions = revisionCycle.cycle
+        .map(
+          (days) => Revision(
+            date: studiedOn.add(Duration(days: days)),
+            status: Status.pendente,
+          ),
+        )
+        .toList();
 
-    
-
-    List<Revision> revisions = [
-      Revision(date: DateTime.now(), status: Status.pendente),
-      Revision(date: DateTime.now().add(Duration(days: 7)), status: Status.pendente),
-      Revision(date: DateTime.now().add(Duration(days: 30)), status: Status.pendente),
-      Revision(date: DateTime.now().add(Duration(days: 60)), status: Status.pendente),
-    ];
-
-    _repository!.insertTopic(Topic(name, revisionCycle, tags, studiedOn, revisions));
+    await _repository!.insertTopic(
+      Topic(name, revisionCycle, tags, studiedOn, revisions),
+    );
   }
 
-  Future<List<Topic>> getAll() async{
-    
+  Future<List<Topic>> getAll() async {
     return await _repository!.getAllTopics();
+  }
+
+  Future<int> delete(int id) async {
+    return await _repository!.delete(id);
   }
 
   /*Topic get(int id) {
@@ -49,4 +57,3 @@ class TopicService {
   list = [];
 }*/
 }
-

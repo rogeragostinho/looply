@@ -25,7 +25,7 @@ class TagRepository {
     await db.execute('''
       CREATE TABLE IF NOT EXISTS $tableName (
         $colId INTEGER PRIMARY KEY AUTOINCREMENT,
-        $colName TEXT,
+        $colName TEXT
       )
     ''');
   }
@@ -35,6 +35,19 @@ class TagRepository {
     final map = tag.toJson();
     map.remove('id'); // remover id para o SQLite gerar automaticamente
     return await _db!.insert(tableName, map, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<Tag?> getTopicById(int id) async {
+    if (_db == null) throw Exception("Database not initialized. Call init() first.");
+    final maps = await _db!.query(
+      tableName,
+      where: '$colId = ?',
+      whereArgs: [id],
+    );
+    if (maps.isNotEmpty) {
+      return Tag.fromJson(maps.first);
+    }
+    return null;
   }
 
   Future<int> delete(int id) async {
@@ -51,4 +64,6 @@ class TagRepository {
     final maps = await _db!.query(tableName, orderBy: '$colId DESC');
     return maps.map((map) => Tag.fromJson(map)).toList();
   }
+
+  //delete all
 }

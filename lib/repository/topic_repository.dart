@@ -65,7 +65,7 @@ class TopicRepository {
   }
 
   /// Deletar um Topic pelo id
-  Future<int> deleteTopic(int id) async {
+  Future<int> delete(int id) async {
     if (_db == null) throw Exception("Database not initialized. Call init() first.");
     return await _db!.delete(
       tableName,

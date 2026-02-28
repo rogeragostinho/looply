@@ -22,19 +22,19 @@ class RevisionCycleService {
     repository.create(RevisionCycle(name, cycle));
   }
 
-  Future<RevisionCycle?> get(int id) async{
+  Future<RevisionCycle?> get(int id) async {
     /*try {
       return list.firstWhere((e) => e.id == id);
     } catch (_) {
       return list.firstWhere((e) => e.id == 1);
     }*/
     var repository = RevisionCycleRepository();
-    return await repository.getTopicById(id);
+    return await repository.getById(id);
   }
 
-  Future<List<RevisionCycle>> getAll() async{
+  Future<List<RevisionCycle>> getAll() async {
     var repository = RevisionCycleRepository();
-    return await repository.getAllTopics();
+    return await repository.getAll();
   }
 
   void remove(int id) {

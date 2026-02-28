@@ -51,7 +51,6 @@ class RevisionCycleRepository {
     );
   }
 
-  /// Deletar um Topic pelo id
   Future<int> delete(int id) async {
     if (_db == null) throw Exception("Database not initialized. Call init() first.");
     return await _db!.delete(
@@ -61,7 +60,7 @@ class RevisionCycleRepository {
     );
   }
 
-  Future<RevisionCycle?> getTopicById(int id) async {
+  Future<RevisionCycle?> getById(int id) async {
     if (_db == null) throw Exception("Database not initialized. Call init() first.");
     final maps = await _db!.query(
       tableName,
@@ -74,14 +73,12 @@ class RevisionCycleRepository {
     return null;
   }
 
-  /// Buscar todos os Topics
-  Future<List<RevisionCycle>> getAllTopics() async {
+  Future<List<RevisionCycle>> getAll() async {
     if (_db == null) throw Exception("Database not initialized. Call init() first.");
     final maps = await _db!.query(tableName, orderBy: '$colId DESC');
     return maps.map((map) => RevisionCycle.fromJson(map)).toList();
   }
 
-  /// Contar todos os Topics
   Future<int> count() async {
     if (_db == null) throw Exception("Database not initialized. Call init() first.");
     final x = await _db!.rawQuery('SELECT COUNT(*) FROM $tableName');
