@@ -18,8 +18,10 @@ class _TopicsPageState extends State<TopicsPage> {
   void initState() {
     super.initState();
     // Use context.read<AppState>() aqui porque você não quer que o initState fique escutando mudanças, só quer chamar a função.
-    final appState = context.read<AppState>();
-    appState.getTopics();
+    Future.microtask(() { // Executa isso depois do codigo atual terminar, evitar chamar o notifyListener antes d emontar a arvore de widgets
+      final appState = context.read<AppState>();
+      appState.getTopics();
+    });
   }
 
   @override
@@ -27,11 +29,13 @@ class _TopicsPageState extends State<TopicsPage> {
     var appState = context.watch<AppState>();
     List<Topic>? topics = appState.topics;
 
+    if (appState.isLoadingTopics) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Scaffold(
       appBar: PageAppBar(title: "Topics"),
-      body: topics == null
-          ? Center(child: CircularProgressIndicator())
-          : ListView(
+      body: ListView(
               children: [
                 for (Topic topic in topics)
                   Card(
