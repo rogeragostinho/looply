@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:looply/model/revision_cycle.dart';
 import 'package:looply/model/tag.dart';
 import 'package:looply/service/revision_cycle_service.dart';
+import 'package:looply/service/tag_service.dart';
 import 'package:looply/service/topic_service.dart';
 import 'package:looply/ui/core/app_state.dart';
 import 'package:provider/provider.dart';
@@ -25,12 +26,6 @@ class _AddTopicPageState extends State<AddTopicPage> {
 
   bool _isSaving = false; // para o botão Create Topic
 
-  /*final List<Map<String, dynamic>> items = [
-    {'id': 1, 'name': 'Item 1'},
-    {'id': 2, 'name': 'Item 2'},
-    {'id': 3, 'name': 'Item 3'},
-    {'id': 4, 'name': 'Item 4'},
-  ];*/
   final Map<int, bool> selectedItems = {};
 
   Future<void> _selectDate() async {
@@ -80,8 +75,16 @@ class _AddTopicPageState extends State<AddTopicPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<AppState>();
-    List<RevisionCycle>? revisionCycles = appState.revisionCycles;
-    List<Tag?> tags = appState.tags ?? [];
+
+    List<RevisionCycle>? revisionCycles = [];
+    revisionCycles.add(RevisionCycleService.instance.getDefault());
+    revisionCycles.addAll(appState.revisionCycles);
+
+    //List<Tag?> tags = appState.tags ?? [];
+    List<Tag?> tags = [];
+    tags.add(TagService.instance.getDefault());
+    tags.addAll(appState.tags);
+
 
     return Scaffold(
       appBar: AppBar(

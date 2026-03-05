@@ -27,7 +27,7 @@ class TopicService {
         .map(
           (days) => Revision(
             date: studiedOn.add(Duration(days: days)),
-            status: Status.pendente,
+            status: Status.upComing,
           ),
         )
         .toList();

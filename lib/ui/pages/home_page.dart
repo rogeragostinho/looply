@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:looply/model/revision.dart' show Status;
+import 'package:looply/model/revision.dart' show Revision, Status;
 import 'package:looply/model/topic.dart';
 import 'package:looply/ui/core/app_state.dart';
 import 'package:looply/ui/pages/topic_details_page.dart';
@@ -63,12 +63,16 @@ class _RevisionsTodayTabState extends State<RevisionsTodayTab> {
     var appState = context.watch<AppState>();
     List<Topic>? topics = appState.topics;
 
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-
     if (appState.isLoadingTopics) {
       return const Center(child: CircularProgressIndicator());
     }
+
+    if (topics.isEmpty) {
+      return Center(child: Text("Sem revisões"));
+    }
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
 
     final topicsWithRevisionToday = topics.where((topic) {
       return topic.revisions.any((revision) {
@@ -83,72 +87,93 @@ class _RevisionsTodayTabState extends State<RevisionsTodayTab> {
     }).toList();
 
     return ListView(
-      children: [
-        for (Topic topic in topicsWithRevisionToday)
-          Card(
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (context) => TopicDetailsPage(topic: topic),
-                  ),
-                );
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: () =>
-                            appState.deleteTopic(topic.id!.toInt()),
-                        label: Icon(Icons.delete),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(topic.tags.first.name),
-                      Text("Iniciado em: ${topic.studiedOn}"),
-                    ],
-                  ),
-                  Text(topic.name),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(onPressed: () {}, child: Text("Pegar")),
-                    ],
-                  ),
-                  Column(
-                    children: topic.revisions.map((revision) {
-                      Color statusColor;
+      children: topicsWithRevisionToday.map((topic) {
+        /*final now = DateTime.now();
+        final today = DateTime(now.year, now.month, now.day);
 
-                      switch (revision.status) {
-                        case Status.pendente:
-                          statusColor = Colors.orange;
-                          break;
-                        case Status.feito:
-                          statusColor = Colors.green;
-                          break;
-                        case Status.naoFeito:
-                          statusColor = Colors.red;
-                          break;
-                      }
+        // Pega a revisão de hoje
+        Revision revisionToday = topic.revisions.firstWhere((revision) {
+          final revisionDate = DateTime(
+            revision.date.year,
+            revision.date.month,
+            revision.date.day,
+          );
+          return revisionDate == today;
+        }); */
 
-                      return Text(
-                        "${revision.date}",
-                        style: TextStyle(color: statusColor),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
+        return Card(
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (context) => TopicDetailsPage(topic: topic),
+                ),
+              );
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("${topic.id}"),
+                    ElevatedButton.icon(
+                      onPressed: () => appState.deleteTopic(topic.id!.toInt()),
+                      label: Icon(Icons.delete),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(topic.tags.toString()),
+                    Text("Iniciado em: ${topic.studiedOn}"),
+                  ],
+                ),
+                Text(topic.name),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(onPressed: () {}, child: Text("Pegar")),
+                  ],
+                ),
+                Column(
+                  children: topic.revisions.map((revision) {
+                    Color statusColor;
+
+                    final today = DateTime(now.year, now.month, now.day);
+                    final revisionDate = DateTime(
+                      revision.date.year,
+                      revision.date.month,
+                      revision.date.day,
+                    );
+
+                    if (today == revisionDate) {
+                      //status
+                    }
+                    switch (revision.status) {
+                      case Status.done:
+                        statusColor = Colors.green;
+                        break;
+                      case Status.pending:
+                        statusColor = Colors.orange;
+                        break;
+                      default:
+                        statusColor = Colors.black;
+                    }
+
+                    return Text(
+                      "${revision.date}",
+                      style: TextStyle(color: statusColor),
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
           ),
-      ],
+        );
+      }).toList(), //->aqui
     );
   }
 }

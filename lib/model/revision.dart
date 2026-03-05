@@ -17,4 +17,4 @@ class Revision {
   }
 }
 
-enum Status {pendente, feito, naoFeito}
+enum Status {pending, done, upComing}

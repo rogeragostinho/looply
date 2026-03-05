@@ -3,6 +3,7 @@ import 'package:looply/repository/tag_repository.dart';
 
 class TagService {
   var _repository;
+  Tag defaultTag = Tag("Geral", id: 0);
 
   TagService._privateConstructor() {
     _repository = TagRepository();
@@ -18,6 +19,10 @@ class TagService {
 
   Future<Tag?> get(int id) async {
     return await _repository.getById();
+  }
+
+  Tag getDefault() {
+    return defaultTag;
   }
 
   Future<List<Tag>> getAll() async {

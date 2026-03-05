@@ -3,6 +3,7 @@ import 'package:looply/repository/revision_cycle_repository.dart';
 
 class RevisionCycleService {
   List<RevisionCycle> list = [];
+  final RevisionCycle defaultRevisonCycle = RevisionCycle("default", [1, 7, 30, 90], id: 0);
 
   RevisionCycleService._privateConstructor() {
     list.add(RevisionCycle("Default", [1, 7, 30, 60]));
@@ -35,6 +36,10 @@ class RevisionCycleService {
   Future<List<RevisionCycle>> getAll() async {
     var repository = RevisionCycleRepository();
     return await repository.getAll();
+  }
+
+  RevisionCycle getDefault() {
+    return defaultRevisonCycle;
   }
 
   void remove(int id) {
