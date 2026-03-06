@@ -19,17 +19,6 @@ class RevisionCycleRepository {
 
   Future<void> init() async {
     _db = await DatabaseCon.instance;
-    await _createTable(_db!);
-  }
-
-  Future<void> _createTable(Database db) async {
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS $tableName (
-        $colId INTEGER PRIMARY KEY AUTOINCREMENT,
-        $colName TEXT,
-        $colCycle TEXT
-      )
-    ''');
   }
 
   Future<int> create(RevisionCycle revision) async {
