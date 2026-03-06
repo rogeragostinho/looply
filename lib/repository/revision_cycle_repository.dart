@@ -1,10 +1,10 @@
 import 'package:looply/db/database_con.dart';
 import 'package:looply/model/revision_cycle.dart';
+import 'package:looply/repository/abstract_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
-class RevisionCycleRepository {
+class RevisionCycleRepository extends AbstractRepository {
   static RevisionCycleRepository? _repository;
-  Database? _db;
 
   static const String tableName= 'tbl_revision_cycle';
   static const String colId= 'id';
@@ -17,22 +17,20 @@ class RevisionCycleRepository {
     return _repository ??= RevisionCycleRepository._internal();
   }
 
-  Future<void> init() async {
-    _db = await DatabaseCon.instance;
-  }
-
   Future<int> create(RevisionCycle revision) async {
-    if (_db == null) throw Exception("Database not initialized. Call init() first.");
+    final dbconn = await db;
+
     final map = revision.toJson();
     map.remove('id'); // remover id para o SQLite gerar automaticamente
-    return await _db!.insert(tableName, map, conflictAlgorithm: ConflictAlgorithm.replace);
+    return await dbconn.insert(tableName, map, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<int> update(RevisionCycle revision) async {
-    if (_db == null) throw Exception("Database not initialized. Call init() first.");
+    final dbconn = await db;
+
     if (revision.id == null) throw Exception("Revision cycle id is null, cannot update.");
 
-    return await _db!.update(
+    return await dbconn.update(
       tableName,
       revision.toJson(),
       where: '$colId = ?',
@@ -41,8 +39,9 @@ class RevisionCycleRepository {
   }
 
   Future<int> delete(int id) async {
-    if (_db == null) throw Exception("Database not initialized. Call init() first.");
-    return await _db!.delete(
+    final dbconn = await db;
+
+    return await dbconn.delete(
       tableName,
       where: '$colId = ?',
       whereArgs: [id],
@@ -50,8 +49,9 @@ class RevisionCycleRepository {
   }
 
   Future<RevisionCycle?> getById(int id) async {
-    if (_db == null) throw Exception("Database not initialized. Call init() first.");
-    final maps = await _db!.query(
+    final dbconn = await db;
+
+    final maps = await dbconn.query(
       tableName,
       where: '$colId = ?',
       whereArgs: [id],
@@ -63,14 +63,16 @@ class RevisionCycleRepository {
   }
 
   Future<List<RevisionCycle>> getAll() async {
-    if (_db == null) throw Exception("Database not initialized. Call init() first.");
-    final maps = await _db!.query(tableName, orderBy: '$colId DESC');
+    final dbconn = await db;
+
+    final maps = await dbconn.query(tableName, orderBy: '$colId DESC');
     return maps.map((map) => RevisionCycle.fromJson(map)).toList();
   }
 
   Future<int> count() async {
-    if (_db == null) throw Exception("Database not initialized. Call init() first.");
-    final x = await _db!.rawQuery('SELECT COUNT(*) FROM $tableName');
+    final dbconn = await db;
+
+    final x = await dbconn.rawQuery('SELECT COUNT(*) FROM $tableName');
     return Sqflite.firstIntValue(x) ?? 0;
   }
 

@@ -1,10 +1,9 @@
-import 'package:looply/db/database_con.dart';
 import 'package:looply/model/tag.dart';
+import 'package:looply/repository/abstract_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
-class TagRepository {
+class TagRepository extends AbstractRepository{
   static TagRepository? _repository;
-  Database? _db;
 
   static const String tableName= 'tbl_tags';
   static const String colId= 'id';
@@ -16,21 +15,18 @@ class TagRepository {
     return _repository ??= TagRepository._internal();
   }
 
-  Future<void> init() async {
-    _db = await DatabaseCon.instance;
-  }
-
-
   Future<int> create(Tag tag) async {
-    if (_db == null) throw Exception("Database not initialized. Call init() first.");
+    final dbconn = await db;
+
     final map = tag.toJson();
     map.remove('id'); // remover id para o SQLite gerar automaticamente
-    return await _db!.insert(tableName, map, conflictAlgorithm: ConflictAlgorithm.replace);
+    return await dbconn.insert(tableName, map, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<Tag?> getTopicById(int id) async {
-    if (_db == null) throw Exception("Database not initialized. Call init() first.");
-    final maps = await _db!.query(
+    final dbconn = await db;
+
+    final maps = await dbconn.query(
       tableName,
       where: '$colId = ?',
       whereArgs: [id],
@@ -42,8 +38,9 @@ class TagRepository {
   }
 
   Future<int> delete(int id) async {
-    if (_db == null) throw Exception("Database not initialized. Call init() first.");
-    return await _db!.delete(
+    final dbconn = await db;
+
+    return await dbconn.delete(
       tableName,
       where: '$colId = ?',
       whereArgs: [id],
@@ -51,8 +48,9 @@ class TagRepository {
   }
 
   Future<List<Tag>> getAll() async {
-    if (_db == null) throw Exception("Database not initialized. Call init() first.");
-    final maps = await _db!.query(tableName, orderBy: '$colId DESC');
+    final dbconn = await db;
+
+    final maps = await dbconn.query(tableName, orderBy: '$colId DESC');
     return maps.map((map) => Tag.fromJson(map)).toList();
   }
 
