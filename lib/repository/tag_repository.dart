@@ -18,17 +18,8 @@ class TagRepository {
 
   Future<void> init() async {
     _db = await DatabaseCon.instance;
-    await _createTable(_db!);
   }
 
-  Future<void> _createTable(Database db) async {
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS $tableName (
-        $colId INTEGER PRIMARY KEY AUTOINCREMENT,
-        $colName TEXT
-      )
-    ''');
-  }
 
   Future<int> create(Tag tag) async {
     if (_db == null) throw Exception("Database not initialized. Call init() first.");
