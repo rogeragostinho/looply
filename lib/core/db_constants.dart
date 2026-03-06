@@ -16,12 +16,12 @@ class TopicsColumns {
 }
 
 class RevisionCycleColumns {
-  static const String colId= 'id';
+  static const String colId = 'id';
   static const String colName = 'name';
   static const String colCycle= 'cycle_json';
 }
 
 class TagsColumns {
-  static const String colId= 'id';
+  static const String colId  = 'id';
   static const String colName = 'name';
 }
