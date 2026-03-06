@@ -1,7 +1,7 @@
 import 'package:looply/model/revision_cycle.dart';
 import 'package:looply/repository/abstract_repository.dart';
 import 'package:sqflite/sqflite.dart';
-import '../core/db_constants.dart';
+import '../core/constants/db_constants.dart';
 
 class RevisionCycleRepository extends AbstractRepository {
   static RevisionCycleRepository? _repository;

@@ -1,6 +1,8 @@
+import '../core/enums/revision_status.dart';
+
 class Revision {
   DateTime date;
-  Status status;
+  RevisionStatus status;
 
   Revision({required this.date, required this.status});
 
@@ -12,9 +14,7 @@ class Revision {
   factory Revision.fromJson(Map<String, dynamic> json) {
     return Revision(
       date: DateTime.parse(json['date']),
-      status: Status.values.byName(json['status']),
+      status: RevisionStatus.values.byName(json['status']),
     );
   }
 }
-
-enum Status {pending, done, upComing}

@@ -1,7 +1,7 @@
 // db_tables_creator.dart
 import 'package:sqflite/sqflite.dart';
 import 'database_con.dart';
-import '../core/db_constants.dart';
+import '../core/constants/db_constants.dart';
 
 class DbInitializer {
   DbInitializer._(); // Construtor privado, não instancia

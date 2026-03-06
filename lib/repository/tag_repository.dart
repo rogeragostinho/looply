@@ -1,7 +1,7 @@
 import 'package:looply/model/tag.dart';
 import 'package:looply/repository/abstract_repository.dart';
 import 'package:sqflite/sqflite.dart';
-import '../core/db_constants.dart';
+import '../core/constants/db_constants.dart';
 
 class TagRepository extends AbstractRepository{
   static TagRepository? _repository;

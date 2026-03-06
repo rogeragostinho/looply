@@ -63,12 +63,3 @@ class Topic {
     );
   }
 }
-
-/*
-Salvar no banco:
-  String ciclosJson = jsonEncode(ciclos);
-    "[1,7,30,90]"
-
-Ler no banco:
-  List<int> ciclos = List<int>.from(jsonDecode(ciclosJson));
-*/

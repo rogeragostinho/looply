@@ -1,10 +1,9 @@
-//import 'package:looply/model/revision.dart';
 import 'package:looply/model/revision.dart';
 import 'package:looply/model/revision_cycle.dart';
 import 'package:looply/model/tag.dart';
 import 'package:looply/model/topic.dart';
-//import 'package:looply/model/topic.dart';
 import 'package:looply/repository/topic_repository.dart';
+import '../core/enums/revision_status.dart';
 
 class TopicService {
   TopicRepository? _repository;
@@ -27,7 +26,7 @@ class TopicService {
         .map(
           (days) => Revision(
             date: studiedOn.add(Duration(days: days)),
-            status: Status.upComing,
+            status: RevisionStatus.upComing,
           ),
         )
         .toList();
