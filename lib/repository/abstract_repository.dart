@@ -1,10 +1,9 @@
 import 'package:looply/db/database_con.dart';
-import 'package:sqflite/sqlite_api.dart';
+import 'package:sqflite/sqflite.dart';
 
 abstract class AbstractRepository {
-  Database? dbconn;
 
-  Future<void> init() async {
-    dbconn = await DatabaseCon.instance;
+  Future<Database> get db async {
+    return await DatabaseCon.instance;
   }
 }
