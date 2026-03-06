@@ -11,6 +11,8 @@ class TopicsColumns {
   static const String colTags = 'tags_json';
   static const String colNote = 'note_json';
   static const String colRevisions = 'revisions_json';
+  static const String colImages = 'images_url_json';
+  static const String colStudiedOn = 'studied_on';
 }
 
 class RevisionCycleColumns {
