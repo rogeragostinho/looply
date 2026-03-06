@@ -26,7 +26,14 @@ class Topic {
     this.imagesUrl,
   });
 
-  Map<String, dynamic> toMap() {
+  // METODOS
+  //Color get color => Color(colorARGB);
+  //
+
+  // =====================================
+  // =============== JSON ================
+  // =====================================
+  Map<String, dynamic> toJson() {
     var map = {
       'name': name,
       'studied_on': studiedOn.toIso8601String(),
@@ -34,32 +41,33 @@ class Topic {
       'revision_cycle_json': jsonEncode(revisionCycle.toJson()),
       'tags_json': jsonEncode(tags.map((t) => t.toJson()).toList()),
       'note_json': note != null ? jsonEncode(note!.toJson()) : null,
-      'revisions_json': jsonEncode(revisions.map((r) => r.toJson()).toList())
+      'revisions_json': jsonEncode(revisions.map((r) => r.toJson()).toList()),
     };
 
-     if (id != null) map['id'] = id.toString(); // só incluir se já existir (update)
+    if (id != null)
+      map['id'] = id.toString(); // só incluir se já existir (update)
 
-     return map;
+    return map;
   }
 
-  factory Topic.fromMap(Map<String, dynamic> map) {
+  factory Topic.fromJson(Map<String, dynamic> map) {
     return Topic(
       map['name'],
       RevisionCycle.fromJson(jsonDecode(map['revision_cycle_json'])),
       (jsonDecode(map['tags_json']) as List)
-        .map((e) => Tag.fromJson(e))
-        .toList(),
+          .map((e) => Tag.fromJson(e))
+          .toList(),
       DateTime.parse(map['studied_on']),
       (jsonDecode(map['revisions_json']) as List)
-        .map((e) => Revision.fromJson(e))
-        .toList(),
+          .map((e) => Revision.fromJson(e))
+          .toList(),
       id: map['id'],
-      note: map['note_json'] != null 
-        ? Note.fromJson(jsonDecode(map['note_json']))
-        : null,
+      note: map['note_json'] != null
+          ? Note.fromJson(jsonDecode(map['note_json']))
+          : null,
       imagesUrl: map['images_url_json'] != null
-        ? List<String>.from(jsonDecode(map['images_url_json']))
-        : null,
+          ? List<String>.from(jsonDecode(map['images_url_json']))
+          : null,
     );
   }
 }

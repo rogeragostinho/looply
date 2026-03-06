@@ -6,6 +6,14 @@ class Revision {
 
   Revision({required this.date, required this.status});
 
+  // METODOS
+
+  //
+
+
+  // =====================================
+  // =============== JSON ================
+  // =====================================
   Map<String, dynamic> toJson() => {
     'date': date.toIso8601String(),
     'status': status.name,

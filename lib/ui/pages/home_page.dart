@@ -4,6 +4,7 @@ import 'package:looply/model/topic.dart';
 import 'package:looply/ui/core/app_state.dart';
 import 'package:looply/ui/pages/topic_details_page.dart';
 import 'package:provider/provider.dart';
+import '../../core/enums/revision_status.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -153,10 +154,10 @@ class _RevisionsTodayTabState extends State<RevisionsTodayTab> {
                       //status
                     }
                     switch (revision.status) {
-                      case Status.done:
+                      case RevisionStatus.done:
                         statusColor = Colors.green;
                         break;
-                      case Status.pending:
+                      case RevisionStatus.pending:
                         statusColor = Colors.orange;
                         break;
                       default:

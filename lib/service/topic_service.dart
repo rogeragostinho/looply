@@ -3,19 +3,19 @@ import 'package:looply/model/revision_cycle.dart';
 import 'package:looply/model/tag.dart';
 import 'package:looply/model/topic.dart';
 import 'package:looply/repository/topic_repository.dart';
+import 'package:looply/service/abstract_service.dart';
 import '../core/enums/revision_status.dart';
 
-class TopicService {
-  TopicRepository? _repository;
+class TopicService extends AbstractService<Topic, TopicRepository> {
 
-  TopicService._privateConstructor() {
-    _repository = TopicRepository();
-  }
+  TopicService._privateConstructor() : super(TopicRepository.instance);
 
+  // ============ SINGLETON ===============
   static final TopicService _instance = TopicService._privateConstructor();
-
   static TopicService get instance => _instance;
+  // =====================================
 
+  // ============ METODOS ==============
   Future<void> create({
     required String name,
     required DateTime studiedOn,
@@ -31,17 +31,17 @@ class TopicService {
         )
         .toList();
 
-    await _repository!.insertTopic(
+    await repository.insert(
       Topic(name, revisionCycle, tags, studiedOn, revisions),
     );
   }
 
   Future<List<Topic>> getAll() async {
-    return await _repository!.getAllTopics();
+    return await repository.getAll();
   }
 
   Future<int> delete(int id) async {
-    return await _repository!.delete(id);
+    return await repository.delete(id);
   }
 
   /*Topic get(int id) {

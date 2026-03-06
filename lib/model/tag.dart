@@ -7,8 +7,15 @@ class Tag {
 
   Tag(this.name/*, this.colorARGB*/, {this.id});
 
-  //Color get color => Color(colorARGB);
+  
+  // METODOS
+    //Color get color => Color(colorARGB);
+  //
 
+
+  // =====================================
+  // =============== JSON ================
+  // =====================================
   Map<String, dynamic> toJson() => {
     'id': id,
     'name': name,

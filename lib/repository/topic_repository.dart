@@ -3,39 +3,40 @@ import 'package:looply/repository/abstract_repository.dart';
 import 'package:sqflite/sqflite.dart';
 import '../core/constants/db_constants.dart';
 
-class TopicRepository extends AbstractRepository {
-  static TopicRepository? _repository;
+class TopicRepository extends AbstractRepository<Topic> {
 
-  TopicRepository._internal();
+  TopicRepository._privateConstructor();
 
-  factory TopicRepository() {
-    return _repository ??= TopicRepository._internal();
-  }
+  // ============ SINGLETON ===============
+  static final TopicRepository _instance = TopicRepository._privateConstructor();
+  static TopicRepository get instance => _instance;
+  // =====================================
 
-  /// Inserir um novo Topic
-  Future<int> insertTopic(Topic topic) async {
+  // ============ METODOS ==============
+  @override
+  Future<int> insert(Topic topic) async {
     final dbconn = await db;
 
-    final map = topic.toMap();
+    final map = topic.toJson();
     map.remove('id'); // remover id para o SQLite gerar automaticamente
     return await dbconn.insert(DBTables.topics, map, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  /// Atualizar um Topic existente
-  Future<int> updateTopic(Topic topic) async {
+  @override
+  Future<int> update(Topic topic) async {
     final dbconn = await db;
 
     if (topic.id == null) throw Exception("Topic id is null, cannot update.");
 
     return await dbconn.update(
       DBTables.topics,
-      topic.toMap(), 
+      topic.toJson(), 
       where: '${TopicsColumns.colId} = ?',
       whereArgs: [topic.id],
     );
   }
 
-  /// Deletar um Topic pelo id
+  @override
   Future<int> delete(int id) async {
     final dbconn = await db;
 
@@ -46,8 +47,8 @@ class TopicRepository extends AbstractRepository {
     );
   }
 
-  /// Buscar um Topic pelo id
-  Future<Topic?> getTopicById(int id) async {
+  @override
+  Future<Topic?> getById(int id) async {
     final dbconn = await db;
 
     final maps = await dbconn.query(
@@ -56,24 +57,16 @@ class TopicRepository extends AbstractRepository {
       whereArgs: [id],
     );
     if (maps.isNotEmpty) {
-      return Topic.fromMap(maps.first);
+      return Topic.fromJson(maps.first);
     }
     return null;
   }
 
-  /// Buscar todos os Topics
-  Future<List<Topic>> getAllTopics() async {
+  @override
+  Future<List<Topic>> getAll() async {
     final dbconn = await db;
 
     final maps = await dbconn.query(DBTables.topics, orderBy: '${TopicsColumns.colStudiedOn} DESC');
-    return maps.map((map) => Topic.fromMap(map)).toList();
-  }
-
-  /// Contar todos os Topics
-  Future<int> count() async {
-    final dbconn = await db;
-
-    final x = await dbconn.rawQuery('SELECT COUNT(*) FROM ${DBTables.topics}');
-    return Sqflite.firstIntValue(x) ?? 0;
+    return maps.map((map) => Topic.fromJson(map)).toList();
   }
 }

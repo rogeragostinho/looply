@@ -7,6 +7,14 @@ class RevisionCycle {
 
   RevisionCycle(this.name, this.cycle, {this.id});
 
+  // METODOS
+
+  //
+
+
+  // =====================================
+  // =============== JSON ================
+  // =====================================
   Map<String, dynamic> toJson() {
     var map = <String, dynamic> {
       //'id': id,

@@ -3,16 +3,19 @@ import 'package:looply/repository/abstract_repository.dart';
 import 'package:sqflite/sqflite.dart';
 import '../core/constants/db_constants.dart';
 
-class TagRepository extends AbstractRepository{
-  static TagRepository? _repository;
+class TagRepository extends AbstractRepository<Tag> {
 
-  TagRepository._internal();
+  TagRepository._privateConstructor();
 
-  factory TagRepository() {
-    return _repository ??= TagRepository._internal();
-  }
+  // ============ SINGLETON ===============
+  static final TagRepository _instance = TagRepository._privateConstructor();
+  static TagRepository get instance => _instance;
+  // =====================================
+  
 
-  Future<int> create(Tag tag) async {
+  // ============ METODOS ==============
+  @override
+  Future<int> insert(Tag tag) async {
     final dbconn = await db;
 
     final map = tag.toJson();
@@ -20,7 +23,8 @@ class TagRepository extends AbstractRepository{
     return await dbconn.insert(DBTables.tags, map, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<Tag?> getTopicById(int id) async {
+  @override
+  Future<Tag?> getById(int id) async {
     final dbconn = await db;
 
     final maps = await dbconn.query(
@@ -34,6 +38,7 @@ class TagRepository extends AbstractRepository{
     return null;
   }
 
+  @override
   Future<int> delete(int id) async {
     final dbconn = await db;
 
@@ -44,6 +49,7 @@ class TagRepository extends AbstractRepository{
     );
   }
 
+  @override
   Future<List<Tag>> getAll() async {
     final dbconn = await db;
 
@@ -51,5 +57,18 @@ class TagRepository extends AbstractRepository{
     return maps.map((map) => Tag.fromJson(map)).toList();
   }
 
-  //delete all
+  @override
+  Future<int> update(Tag tag) async {
+    final dbconn = await db;
+
+    if (tag.id == null) throw Exception("Tag id is null, cannot update.");
+
+    return await dbconn.update(
+      DBTables.topics,
+      tag.toJson(), 
+      where: '${TopicsColumns.colId} = ?',
+      whereArgs: [tag.id],
+    );
+  }
+
 }

@@ -1,9 +1,18 @@
 class Note {
+  
   String title;
   String content;
 
   Note(this.title, this.content);
 
+  // METODOS
+
+  //
+
+
+  // =====================================
+  // =============== JSON ================
+  // =====================================
   Map<String, dynamic> toJson() {
     return {
       'title':title,

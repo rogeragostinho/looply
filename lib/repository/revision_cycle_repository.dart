@@ -3,16 +3,18 @@ import 'package:looply/repository/abstract_repository.dart';
 import 'package:sqflite/sqflite.dart';
 import '../core/constants/db_constants.dart';
 
-class RevisionCycleRepository extends AbstractRepository {
-  static RevisionCycleRepository? _repository;
+class RevisionCycleRepository extends AbstractRepository<RevisionCycle> {
 
-  RevisionCycleRepository._internal();
+  RevisionCycleRepository._privateConstructor();
 
-  factory RevisionCycleRepository() {
-    return _repository ??= RevisionCycleRepository._internal();
-  }
+  // ============ SINGLETON ===============
+  static final RevisionCycleRepository _instance = RevisionCycleRepository._privateConstructor();
+  static RevisionCycleRepository get instance => _instance;
+  // =====================================
 
-  Future<int> create(RevisionCycle revision) async {
+  // ============ METODOS ==============
+  @override
+  Future<int> insert(RevisionCycle revision) async {
     final dbconn = await db;
 
     final map = revision.toJson();
@@ -20,6 +22,7 @@ class RevisionCycleRepository extends AbstractRepository {
     return await dbconn.insert(DBTables.revisionCycle, map, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  @override
   Future<int> update(RevisionCycle revision) async {
     final dbconn = await db;
 
@@ -33,6 +36,7 @@ class RevisionCycleRepository extends AbstractRepository {
     );
   }
 
+  @override
   Future<int> delete(int id) async {
     final dbconn = await db;
 
@@ -43,6 +47,7 @@ class RevisionCycleRepository extends AbstractRepository {
     );
   }
 
+  @override
   Future<RevisionCycle?> getById(int id) async {
     final dbconn = await db;
 
@@ -57,18 +62,12 @@ class RevisionCycleRepository extends AbstractRepository {
     return null;
   }
 
+  @override
   Future<List<RevisionCycle>> getAll() async {
     final dbconn = await db;
 
     final maps = await dbconn.query(DBTables.revisionCycle, orderBy: '${RevisionCycleColumns.colId} DESC');
     return maps.map((map) => RevisionCycle.fromJson(map)).toList();
-  }
-
-  Future<int> count() async {
-    final dbconn = await db;
-
-    final x = await dbconn.rawQuery('SELECT COUNT(*) FROM $DBTables.revisionCycle');
-    return Sqflite.firstIntValue(x) ?? 0;
   }
 
 }
