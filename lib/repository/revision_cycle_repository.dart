@@ -1,15 +1,10 @@
-import 'package:looply/db/database_con.dart';
 import 'package:looply/model/revision_cycle.dart';
 import 'package:looply/repository/abstract_repository.dart';
 import 'package:sqflite/sqflite.dart';
+import '../core/db_constants.dart';
 
 class RevisionCycleRepository extends AbstractRepository {
   static RevisionCycleRepository? _repository;
-
-  static const String tableName= 'tbl_revision_cycle';
-  static const String colId= 'id';
-  static const String colName = 'name';
-  static const String colCycle= 'cycle_json';
 
   RevisionCycleRepository._internal();
 
@@ -22,7 +17,7 @@ class RevisionCycleRepository extends AbstractRepository {
 
     final map = revision.toJson();
     map.remove('id'); // remover id para o SQLite gerar automaticamente
-    return await dbconn.insert(tableName, map, conflictAlgorithm: ConflictAlgorithm.replace);
+    return await dbconn.insert(DBTables.revisionCycle, map, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<int> update(RevisionCycle revision) async {
@@ -31,9 +26,9 @@ class RevisionCycleRepository extends AbstractRepository {
     if (revision.id == null) throw Exception("Revision cycle id is null, cannot update.");
 
     return await dbconn.update(
-      tableName,
+      DBTables.revisionCycle,
       revision.toJson(),
-      where: '$colId = ?',
+      where: '${RevisionCycleColumns.colId} = ?',
       whereArgs: [revision.id],
     );
   }
@@ -42,8 +37,8 @@ class RevisionCycleRepository extends AbstractRepository {
     final dbconn = await db;
 
     return await dbconn.delete(
-      tableName,
-      where: '$colId = ?',
+      DBTables.revisionCycle,
+      where: '${RevisionCycleColumns.colId} = ?',
       whereArgs: [id],
     );
   }
@@ -52,8 +47,8 @@ class RevisionCycleRepository extends AbstractRepository {
     final dbconn = await db;
 
     final maps = await dbconn.query(
-      tableName,
-      where: '$colId = ?',
+      DBTables.revisionCycle,
+      where: '${RevisionCycleColumns.colId} = ?',
       whereArgs: [id],
     );
     if (maps.isNotEmpty) {
@@ -65,14 +60,14 @@ class RevisionCycleRepository extends AbstractRepository {
   Future<List<RevisionCycle>> getAll() async {
     final dbconn = await db;
 
-    final maps = await dbconn.query(tableName, orderBy: '$colId DESC');
+    final maps = await dbconn.query(DBTables.revisionCycle, orderBy: '${RevisionCycleColumns.colId} DESC');
     return maps.map((map) => RevisionCycle.fromJson(map)).toList();
   }
 
   Future<int> count() async {
     final dbconn = await db;
 
-    final x = await dbconn.rawQuery('SELECT COUNT(*) FROM $tableName');
+    final x = await dbconn.rawQuery('SELECT COUNT(*) FROM $DBTables.revisionCycle');
     return Sqflite.firstIntValue(x) ?? 0;
   }
 

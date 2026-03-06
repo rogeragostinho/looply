@@ -1,19 +1,10 @@
 import 'package:looply/model/topic.dart';
 import 'package:looply/repository/abstract_repository.dart';
 import 'package:sqflite/sqflite.dart';
+import '../core/db_constants.dart';
 
 class TopicRepository extends AbstractRepository {
   static TopicRepository? _repository;
-
-  static const String tableName = "tbl_topics";
-  static const String colId = 'id';
-  static const String colName = "name";
-  static const String colRevisionCycle = 'revision_cycle_json';
-  static const String colTags = 'tags_json';
-  static const String colNote = 'note_json';
-  static const String colRevisions = 'revisions_json';
-  static const String colImages = 'images_url_json';
-  static const String colStudiedOn = 'studied_on';
 
   TopicRepository._internal();
 
@@ -27,7 +18,7 @@ class TopicRepository extends AbstractRepository {
 
     final map = topic.toMap();
     map.remove('id'); // remover id para o SQLite gerar automaticamente
-    return await dbconn.insert(tableName, map, conflictAlgorithm: ConflictAlgorithm.replace);
+    return await dbconn.insert(DBTables.topics, map, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   /// Atualizar um Topic existente
@@ -37,9 +28,9 @@ class TopicRepository extends AbstractRepository {
     if (topic.id == null) throw Exception("Topic id is null, cannot update.");
 
     return await dbconn.update(
-      tableName,
-      topic.toMap(),
-      where: '$colId = ?',
+      DBTables.topics,
+      topic.toMap(), 
+      where: '${TopicsColumns.colId} = ?',
       whereArgs: [topic.id],
     );
   }
@@ -49,8 +40,8 @@ class TopicRepository extends AbstractRepository {
     final dbconn = await db;
 
     return await dbconn.delete(
-      tableName,
-      where: '$colId = ?',
+      DBTables.topics,
+      where: '${TopicsColumns.colId} = ?',
       whereArgs: [id],
     );
   }
@@ -60,8 +51,8 @@ class TopicRepository extends AbstractRepository {
     final dbconn = await db;
 
     final maps = await dbconn.query(
-      tableName,
-      where: '$colId = ?',
+      DBTables.topics,
+      where: '${TopicsColumns.colId} = ?',
       whereArgs: [id],
     );
     if (maps.isNotEmpty) {
@@ -74,7 +65,7 @@ class TopicRepository extends AbstractRepository {
   Future<List<Topic>> getAllTopics() async {
     final dbconn = await db;
 
-    final maps = await dbconn.query(tableName, orderBy: '$colStudiedOn DESC');
+    final maps = await dbconn.query(DBTables.topics, orderBy: '${TopicsColumns.colStudiedOn} DESC');
     return maps.map((map) => Topic.fromMap(map)).toList();
   }
 
@@ -82,7 +73,7 @@ class TopicRepository extends AbstractRepository {
   Future<int> count() async {
     final dbconn = await db;
 
-    final x = await dbconn.rawQuery('SELECT COUNT(*) FROM $tableName');
+    final x = await dbconn.rawQuery('SELECT COUNT(*) FROM ${DBTables.topics}');
     return Sqflite.firstIntValue(x) ?? 0;
   }
 }

@@ -1,13 +1,10 @@
 import 'package:looply/model/tag.dart';
 import 'package:looply/repository/abstract_repository.dart';
 import 'package:sqflite/sqflite.dart';
+import '../core/db_constants.dart';
 
 class TagRepository extends AbstractRepository{
   static TagRepository? _repository;
-
-  static const String tableName= 'tbl_tags';
-  static const String colId= 'id';
-  static const String colName = 'name';
 
   TagRepository._internal();
 
@@ -20,15 +17,15 @@ class TagRepository extends AbstractRepository{
 
     final map = tag.toJson();
     map.remove('id'); // remover id para o SQLite gerar automaticamente
-    return await dbconn.insert(tableName, map, conflictAlgorithm: ConflictAlgorithm.replace);
+    return await dbconn.insert(DBTables.tags, map, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<Tag?> getTopicById(int id) async {
     final dbconn = await db;
 
     final maps = await dbconn.query(
-      tableName,
-      where: '$colId = ?',
+      DBTables.tags,
+      where: '${TagsColumns.colId} = ?',
       whereArgs: [id],
     );
     if (maps.isNotEmpty) {
@@ -41,8 +38,8 @@ class TagRepository extends AbstractRepository{
     final dbconn = await db;
 
     return await dbconn.delete(
-      tableName,
-      where: '$colId = ?',
+      DBTables.tags,
+      where: '${TagsColumns.colId} = ?',
       whereArgs: [id],
     );
   }
@@ -50,7 +47,7 @@ class TagRepository extends AbstractRepository{
   Future<List<Tag>> getAll() async {
     final dbconn = await db;
 
-    final maps = await dbconn.query(tableName, orderBy: '$colId DESC');
+    final maps = await dbconn.query(DBTables.tags, orderBy: '${TagsColumns.colId} DESC');
     return maps.map((map) => Tag.fromJson(map)).toList();
   }
 
