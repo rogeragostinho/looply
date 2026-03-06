@@ -1,6 +1,4 @@
 import 'package:looply/model/revision.dart';
-import 'package:looply/model/revision_cycle.dart';
-import 'package:looply/model/tag.dart';
 import 'package:looply/model/topic.dart';
 import 'package:looply/repository/topic_repository.dart';
 import 'package:looply/service/abstract_service.dart';
@@ -16,7 +14,7 @@ class TopicService extends AbstractService<Topic, TopicRepository> {
   // =====================================
 
   // ============ METODOS ==============
-  Future<void> create({
+  /*Future<void> create({
     required String name,
     required DateTime studiedOn,
     required RevisionCycle revisionCycle,
@@ -34,25 +32,42 @@ class TopicService extends AbstractService<Topic, TopicRepository> {
     await repository.insert(
       Topic(name, revisionCycle, tags, studiedOn, revisions),
     );
+  }*/
+
+  @override
+  Future<int> insert(Topic topic) async {
+    final revisions = topic.revisionCycle.cycle
+        .map(
+          (days) => Revision(
+            date: topic.studiedOn.add(Duration(days: days)),
+            status: RevisionStatus.upComing,
+          ),
+        )
+        .toList();
+
+    topic.revisions = revisions;
+
+    return await repository.insert(topic);
   }
 
+  @override
+  Future<int> update(Topic topic) async {
+    return await repository.update(topic);
+  }
+
+  @override
   Future<List<Topic>> getAll() async {
     return await repository.getAll();
   }
 
+  @override
   Future<int> delete(int id) async {
     return await repository.delete(id);
   }
 
-  /*Topic get(int id) {
-    return list.elementAt(id);
+  @override
+  Future<Topic?> getById(int id) async {
+    return await repository.getById(id);
   }
 
-  void remove(int id) {
-    list.removeAt(id);
-  }
-
-  void removeAll() {
-  list = [];
-}*/
 }

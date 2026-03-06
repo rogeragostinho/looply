@@ -4,10 +4,10 @@ abstract class AbstractService<T, R> {
 
   AbstractService(this.repository);
 
-  /*Future<int> insert(T item);
+  Future<int> insert(T item);
   Future<int> update(T item);
   Future<int> delete(int id);
   Future<T?> getById(int id);
-  Future<List<T>> getAll();*/
-
+  Future<List<T>> getAll();
+  
 }

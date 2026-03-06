@@ -14,11 +14,18 @@ class TagService extends AbstractService<Tag, TagRepository> {
   // =====================================
 
   // ============ METODOS ==============
-  void create(String name) {
-    repository.insert(Tag(name));
+  @override
+  Future<int> insert(Tag tag) async {
+    return await repository.insert(tag);
   }
 
-  Future<Tag?> get(int id) async {
+  @override
+  Future<int> update(Tag tag) async {
+    return await repository.update(tag);
+  }
+
+  @override
+  Future<Tag?> getById(int id) async {
     return await repository.getById(0);
   }
 
@@ -26,11 +33,13 @@ class TagService extends AbstractService<Tag, TagRepository> {
     return defaultTag;
   }
 
+  @override
   Future<List<Tag>> getAll() async {
     return await repository.getAll();
   }
 
-  void delete(int id) async{
-    await repository.delete(id);
+  @override
+  Future<int> delete(int id) async{
+    return await repository.delete(id);
   }
 }

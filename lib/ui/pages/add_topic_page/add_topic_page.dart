@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:looply/model/revision_cycle.dart';
 import 'package:looply/model/tag.dart';
+import 'package:looply/model/topic.dart';
 import 'package:looply/service/revision_cycle_service.dart';
 import 'package:looply/service/tag_service.dart';
 import 'package:looply/service/topic_service.dart';
@@ -225,12 +226,14 @@ class _AddTopicPageState extends State<AddTopicPage> {
                             .where((tag) => selectedItems[tag.id] == true)
                             .toList();
 
-                        await TopicService.instance.create(
-                          name: formTopicController.text,
-                          studiedOn: studiedOn,
-                          revisionCycle: selectedRevisionCycle!,
-                          tags: selectedTagsList,
-                        );
+                        
+
+                        await TopicService.instance.insert(Topic(
+                          formTopicController.text,
+                          selectedRevisionCycle!,
+                          selectedTagsList,
+                          studiedOn
+                        ));
 
                         if (mounted) {
                           Navigator.pop(context);

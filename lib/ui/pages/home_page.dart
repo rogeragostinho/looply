@@ -76,7 +76,7 @@ class _RevisionsTodayTabState extends State<RevisionsTodayTab> {
     final today = DateTime(now.year, now.month, now.day);
 
     final topicsWithRevisionToday = topics.where((topic) {
-      return topic.revisions.any((revision) {
+      return topic.revisions!.any((revision) {
         final revisionDate = DateTime(
           revision.date.year,
           revision.date.month,
@@ -140,7 +140,7 @@ class _RevisionsTodayTabState extends State<RevisionsTodayTab> {
                   ],
                 ),
                 Column(
-                  children: topic.revisions.map((revision) {
+                  children: topic.revisions!.map((revision) {
                     Color statusColor;
 
                     final today = DateTime(now.year, now.month, now.day);

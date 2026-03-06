@@ -26,7 +26,7 @@ class _TopicDetailsPageState extends State<TopicDetailsPage> {
               return Text(tag.name);
             }),
             Text("Revision Timeline"),
-            ...widget.topic.revisions.map((revision) {
+            ...widget.topic.revisions!.map((revision) {
               return Text("${revision.date} - ${revision.status}");
             }),
             Card(

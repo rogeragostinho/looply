@@ -11,7 +11,7 @@ class Topic {
   RevisionCycle revisionCycle;
   List<Tag> tags;
   DateTime studiedOn;
-  List<Revision> revisions;
+  List<Revision>? revisions;
   Note? note;
   List<String>? imagesUrl;
 
@@ -19,15 +19,15 @@ class Topic {
     this.name,
     this.revisionCycle,
     this.tags,
-    this.studiedOn,
-    this.revisions, {
+    this.studiedOn, {
+    this.revisions,
     this.id,
     this.note,
-    this.imagesUrl,
+    this.imagesUrl, // -> adicionar no json 
   });
 
   // METODOS
-  //Color get color => Color(colorARGB);
+  
   //
 
   // =====================================
@@ -41,11 +41,10 @@ class Topic {
       'revision_cycle_json': jsonEncode(revisionCycle.toJson()),
       'tags_json': jsonEncode(tags.map((t) => t.toJson()).toList()),
       'note_json': note != null ? jsonEncode(note!.toJson()) : null,
-      'revisions_json': jsonEncode(revisions.map((r) => r.toJson()).toList()),
+      'revisions_json': jsonEncode(revisions!.map((r) => r.toJson()).toList()),
     };
 
-    if (id != null)
-      map['id'] = id.toString(); // só incluir se já existir (update)
+    if (id != null) map['id'] = id.toString();
 
     return map;
   }
@@ -58,10 +57,10 @@ class Topic {
           .map((e) => Tag.fromJson(e))
           .toList(),
       DateTime.parse(map['studied_on']),
-      (jsonDecode(map['revisions_json']) as List)
+      revisions: (jsonDecode(map['revisions_json']) as List)
           .map((e) => Revision.fromJson(e))
           .toList(),
-      id: map['id'],
+      id: map['id'] != null ? int.parse(map['id'].toString()) : null,
       note: map['note_json'] != null
           ? Note.fromJson(jsonDecode(map['note_json']))
           : null,

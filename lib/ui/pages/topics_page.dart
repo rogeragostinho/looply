@@ -61,7 +61,7 @@ class _TopicsPageState extends State<TopicsPage> {
                     Revision Cycle: ${topic.revisionCycle.name} (${topic.revisionCycle.cycle})
                     Tags: ${topic.tags.map((t) => t.name).join(', ')}
                     Studied On: ${topic.studiedOn.toIso8601String()}
-                    Revisions: ${topic.revisions.map((r) => ("${r.date} - ${r.status}")).join(', ')}
+                    Revisions: ${topic.revisions!.map((r) => ("${r.date} - ${r.status}")).join(', ')}
                     Note: ${topic.note?.content ?? 'No note'}
                     Images: ${topic.imagesUrl?.join(', ') ?? 'No images'}
                     '''),

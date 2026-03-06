@@ -17,35 +17,42 @@ class RevisionCycleService extends AbstractService<RevisionCycle, RevisionCycleR
   // =====================================
 
   // ============ METODOS ==============
-  void create(String name, List<int> cycle) {
+  /*void create(String name, List<int> cycle) {
     /*int id = list.length+1;
 
     list.add(RevisionCycle(id, name, cycles));*/
 
     repository.insert(RevisionCycle(name, cycle));
+  }*/
+
+  @override
+  Future<int> insert(RevisionCycle cycle) async {
+    return await repository.insert(cycle);
   }
 
-  Future<RevisionCycle?> get(int id) async {
+  @override
+  Future<int> update(RevisionCycle cycle) async {
+    return await repository.update(cycle);
+  }
+
+  @override
+  Future<RevisionCycle?> getById(int id) async {
     return await repository.getById(id);
   }
 
+  @override
   Future<List<RevisionCycle>> getAll() async {
     return await repository.getAll();
   }
+
 
   RevisionCycle getDefault() {
     return defaultRevisonCycle;
   }
 
-  void remove(int id) {
-    try {
-      list.removeWhere((e) => e.id == id);
-    } catch (_) { 
-      return;
-    }
+  @override
+  Future<int> delete(int id) async {
+    return await repository.delete(id);
   }
 
-  void removeAll() {
-    list = [];
-  }
 }
