@@ -3,14 +3,14 @@ import 'package:path/path.dart';
 
 class DatabaseCon {
 
-  static Database? _db;
+  static Database? _instance;
 
   DatabaseCon._();
 
-  static Future<Database> get db async {
-    if (_db != null) return _db!;
-    _db = await initDB();
-    return _db!;
+  static Future<Database> get instance async {
+    if (_instance != null) return _instance!;
+    _instance = await initDB();
+    return _instance!;
   }
 
   static Future<Database> initDB() async {
