@@ -14,25 +14,6 @@ class TopicService extends AbstractService<Topic, TopicRepository> {
   // =====================================
 
   // ============ METODOS ==============
-  /*Future<void> create({
-    required String name,
-    required DateTime studiedOn,
-    required RevisionCycle revisionCycle,
-    required List<Tag> tags,
-  }) async {
-    final revisions = revisionCycle.cycle
-        .map(
-          (days) => Revision(
-            date: studiedOn.add(Duration(days: days)),
-            status: RevisionStatus.upComing,
-          ),
-        )
-        .toList();
-
-    await repository.insert(
-      Topic(name, revisionCycle, tags, studiedOn, revisions),
-    );
-  }*/
 
   @override
   Future<int> insert(Topic topic) async {
