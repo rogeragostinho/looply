@@ -25,23 +25,8 @@ class TopicRepository {
   /// Inicializa o banco e cria a tabela
   Future<void> init() async {
     _db = await DatabaseCon.instance;
-    await _createTable(_db!);
   }
 
-  Future<void> _createTable(Database db) async {
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS $tableName (
-        $colId INTEGER PRIMARY KEY AUTOINCREMENT,
-        $colName TEXT,
-        $colRevisionCycle TEXT,
-        $colTags TEXT,
-        $colNote TEXT,
-        $colRevisions TEXT,
-        $colImages TEXT,
-        $colStudiedOn TEXT
-      )
-    ''');
-  }
 
   /// Inserir um novo Topic
   Future<int> insertTopic(Topic topic) async {
