@@ -17,7 +17,7 @@ class TagRepository {
   }
 
   Future<void> init() async {
-    _db = await DatabaseCon.db;
+    _db = await DatabaseCon.instance;
     await _createTable(_db!);
   }
 
