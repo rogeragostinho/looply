@@ -26,7 +26,7 @@ class TagService extends AbstractService<Tag, TagRepository> {
 
   @override
   Future<Tag?> getById(int id) async {
-    return await repository.getById(0);
+    return await repository.getById(id);
   }
 
   Tag getDefault() {
