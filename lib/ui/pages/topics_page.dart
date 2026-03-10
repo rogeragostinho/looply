@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:looply/ui/core/app_state.dart';
 import 'package:looply/ui/core/ui/page_app_bar.dart';
 import 'package:looply/model/topic.dart';
-import 'package:looply/service/topic_service.dart';
 import 'package:looply/ui/pages/topic_details_page.dart';
+import 'package:looply/view_model/topic_view_model.dart';
 import 'package:provider/provider.dart';
 
 class TopicsPage extends StatefulWidget {
@@ -18,22 +18,44 @@ class _TopicsPageState extends State<TopicsPage> {
   void initState() {
     super.initState();
     // Use context.read<AppState>() aqui porque você não quer que o initState fique escutando mudanças, só quer chamar a função.
-    Future.microtask(() { // Executa isso depois do codigo atual terminar, evitar chamar o notifyListener antes d emontar a arvore de widgets
+    /*Future.microtask(() { // Executa isso depois do codigo atual terminar, evitar chamar o notifyListener antes d emontar a arvore de widgets
       final appState = context.read<AppState>();
       appState.getTopics();
+    });*/
+
+    // carrega os tópicos ao iniciar
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<TopicViewModel>().loadTopics();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<AppState>();
-    List<Topic>? topics = appState.topics;
+    final topicVM = context.watch<TopicViewModel>();
+    //List<Topic>? topics = appState.topics;
 
-    if (appState.isLoadingTopics) {
+    if (topicVM.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return Scaffold(
+    if (topicVM.topics.isEmpty) {
+      return const Center(child: Text("Nenhum tópico encontrado."));
+    }
+
+    return ListView.builder(
+      itemCount: topicVM.topics.length,
+      itemBuilder: (context, index) {
+        final topic = topicVM.topics[index];
+        return ListTile(
+          title: Text(topic.name),
+          subtitle: Text(
+              "Revisões: ${topic.revisions!.length} - Tags: ${topic.tags.map((t) => t.name).join(', ')}"),
+        );
+      },
+    );
+
+    /*return Scaffold(
       appBar: PageAppBar(title: "Topics"),
       body: ListView(
               children: [
@@ -71,6 +93,6 @@ class _TopicsPageState extends State<TopicsPage> {
                   ),
               ],
             ),
-    );
+    );*/
   }
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:looply/model/topic.dart';
-import 'package:looply/service/revision_cycle_service.dart';
-import 'package:looply/service/tag_service.dart';
-import 'package:looply/service/topic_service.dart';
+import 'package:looply/repository/revision_cycle_repository.dart';
+import 'package:looply/repository/tag_repository.dart';
+import 'package:looply/repository/topic_repository.dart';
+import 'package:looply/view_model/revision_cycle_view_model.dart';
+import 'package:looply/view_model/tag_view_model.dart';
+import 'package:looply/view_model/topic_view_model.dart';
 
 class AppState extends ChangeNotifier{
   int currentPageIndex = 0;
@@ -21,7 +24,7 @@ class AppState extends ChangeNotifier{
     isLoadingTopics = true;
     notifyListeners();
 
-    final result = await TopicService.instance.getAll();
+    final result = await TopicViewModel(TopicRepository()).getAll();
 
     topics = result ?? [];
     
@@ -30,7 +33,7 @@ class AppState extends ChangeNotifier{
   }
 
   void getRevisionCycles() async {
-    revisionCycles = await RevisionCycleService.instance.getAll();
+    revisionCycles = await RevisionCycleViewModel(RevisionCycleRepository()).getAll();
     notifyListeners();
   }
 
@@ -40,12 +43,12 @@ class AppState extends ChangeNotifier{
   }
 
   void getTags() async {
-    tags = await TagService.instance.getAll();
+    tags = await TagViewModel(TagRepository()).getAll();
     notifyListeners();
   }
 
   void deleteTopic(int id) async {
-    await TopicService.instance.delete(id);
+    await TopicViewModel(TopicRepository()).delete(id);
     getTopics();
   }
 }

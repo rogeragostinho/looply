@@ -1,17 +1,12 @@
 import 'package:looply/model/tag.dart';
 import 'package:looply/repository/tag_repository.dart';
-import 'package:looply/service/abstract_service.dart';
+import 'package:looply/view_model/abstract_view_model.dart';
 
-class TagService extends AbstractService<Tag, TagRepository> {
+class TagViewModel extends AbstractViewModel<Tag, TagRepository> {
 
   Tag defaultTag = Tag("Geral", id: 0);
 
-  TagService._privateConstructor() : super(TagRepository.instance);
-
-  // ============ SINGLETON ===============
-  static final TagService _instance = TagService._privateConstructor();
-  static TagService get instance => _instance;
-  // =====================================
+  TagViewModel(super.repository);
 
   // ============ METODOS ==============
   @override

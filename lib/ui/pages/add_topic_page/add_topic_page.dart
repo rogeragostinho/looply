@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:looply/model/revision_cycle.dart';
 import 'package:looply/model/tag.dart';
 import 'package:looply/model/topic.dart';
-import 'package:looply/service/revision_cycle_service.dart';
-import 'package:looply/service/tag_service.dart';
-import 'package:looply/service/topic_service.dart';
 import 'package:looply/ui/core/app_state.dart';
+import 'package:looply/view_model/revision_cycle_view_model.dart';
+import 'package:looply/view_model/tag_view_model.dart';
+import 'package:looply/view_model/topic_view_model.dart';
 import 'package:provider/provider.dart';
 
 class AddTopicPage extends StatefulWidget {
@@ -76,14 +76,17 @@ class _AddTopicPageState extends State<AddTopicPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<AppState>();
+    var topisState = context.watch<TopicViewModel>();
+    var revisionCycleState = context.watch<RevisionCycleViewModel>();
+    var tagState = context.watch<TagViewModel>();
 
     List<RevisionCycle>? revisionCycles = [];
-    revisionCycles.add(RevisionCycleService.instance.getDefault());
+    revisionCycles.add(revisionCycleState.getDefault());
     revisionCycles.addAll(appState.revisionCycles);
 
     //List<Tag?> tags = appState.tags ?? [];
     List<Tag?> tags = [];
-    tags.add(TagService.instance.getDefault());
+    tags.add(tagState.getDefault());
     tags.addAll(appState.tags);
 
 
@@ -226,9 +229,9 @@ class _AddTopicPageState extends State<AddTopicPage> {
                             .where((tag) => selectedItems[tag.id] == true)
                             .toList();
 
-                        
+                        final topicVM = context.read<TopicViewModel>();                    
 
-                        await TopicService.instance.insert(Topic(
+                        topicVM.insert(Topic(
                           formTopicController.text,
                           selectedRevisionCycle!,
                           selectedTagsList,

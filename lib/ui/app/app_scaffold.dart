@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:looply/model/revision_cycle.dart';
-import 'package:looply/model/tag.dart';
-import 'package:looply/service/revision_cycle_service.dart';
-import 'package:looply/service/tag_service.dart';
-import 'package:looply/service/topic_service.dart';
 import 'package:looply/ui/app/app_bottom_app_bar.dart';
 import 'package:looply/ui/core/app_state.dart';
 import 'package:looply/ui/pages/account_page.dart';
@@ -24,25 +19,6 @@ class _AppScaffoldState extends State<AppScaffold> {
   @override
   void initState() {
     super.initState();
-
-    /*RevisionCycleService.instance.create("Custom1", [1, 7, 30, 90]);
-
-    TagService.instance.create("geral");
-
-    TopicService.instance.create(
-      name: "programação",
-      revisionCycle: RevisionCycle('default', [1, 7, 30, 60]),
-      tags: [Tag("geral"), Tag("dev")],
-      studiedOn: DateTime.now(),
-    );*/
-
-    /*TopicService.instance.create(
-      name: "Matemática Discreta",
-      studiedOn: DateTime.now(),
-      revisionCycle: RevisionCycleService.instance.get(1),
-      tags: [Tag(1, "Geral"/*, Colors.deepOrange.toARGB32()*/)],
-    );*/
-
   }
 
   @override
