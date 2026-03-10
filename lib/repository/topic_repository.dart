@@ -5,13 +5,6 @@ import '../core/constants/db_constants.dart';
 
 class TopicRepository extends AbstractRepository<Topic> {
 
-  TopicRepository._privateConstructor();
-
-  // ============ SINGLETON ===============
-  static final TopicRepository _instance = TopicRepository._privateConstructor();
-  static TopicRepository get instance => _instance;
-  // =====================================
-
   // ============ METODOS ==============
   @override
   Future<int> insert(Topic topic) async {

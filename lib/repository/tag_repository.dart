@@ -3,15 +3,7 @@ import 'package:looply/repository/abstract_repository.dart';
 import 'package:sqflite/sqflite.dart';
 import '../core/constants/db_constants.dart';
 
-class TagRepository extends AbstractRepository<Tag> {
-
-  TagRepository._privateConstructor();
-
-  // ============ SINGLETON ===============
-  static final TagRepository _instance = TagRepository._privateConstructor();
-  static TagRepository get instance => _instance;
-  // =====================================
-  
+class TagRepository extends AbstractRepository<Tag> { 
 
   // ============ METODOS ==============
   @override

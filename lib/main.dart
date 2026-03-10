@@ -3,7 +3,7 @@ import 'package:looply/db/db_initializer.dart';
 import 'package:looply/ui/app/main_app.dart';
 
 void main(){
-  //WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
 
   DbInitializer.init();
 

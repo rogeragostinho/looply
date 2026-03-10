@@ -5,13 +5,6 @@ import '../core/constants/db_constants.dart';
 
 class RevisionCycleRepository extends AbstractRepository<RevisionCycle> {
 
-  RevisionCycleRepository._privateConstructor();
-
-  // ============ SINGLETON ===============
-  static final RevisionCycleRepository _instance = RevisionCycleRepository._privateConstructor();
-  static RevisionCycleRepository get instance => _instance;
-  // =====================================
-
   // ============ METODOS ==============
   @override
   Future<int> insert(RevisionCycle revision) async {
