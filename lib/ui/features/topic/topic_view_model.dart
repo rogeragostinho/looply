@@ -1,8 +1,8 @@
 import 'package:looply/model/revision.dart';
 import 'package:looply/model/topic.dart';
 import 'package:looply/repository/topic_repository.dart';
-import 'package:looply/view_model/abstract_view_model.dart';
-import '../core/enums/revision_status.dart';
+import 'package:looply/core/view_model/abstract_view_model.dart';
+import '../../../core/enums/revision_status.dart';
 
 class TopicViewModel extends AbstractViewModel<Topic, TopicRepository> {
   List<Topic> topics = [];
@@ -22,7 +22,6 @@ class TopicViewModel extends AbstractViewModel<Topic, TopicRepository> {
     _setLoading(false);
   }
 
-  @override
   void insert(Topic topic) async {
     final revisions = topic.revisionCycle.cycle
         .map(
@@ -41,32 +40,20 @@ class TopicViewModel extends AbstractViewModel<Topic, TopicRepository> {
     await loadTopics();
   }
 
-  @override
-  Future<int> update(Topic topic) async {
-    return await repository.update(topic);
+  Future<void> update(Topic topic) async {
+    await repository.update(topic);
+
+    await loadTopics();
   }
 
-  @override
   Future<List<Topic>> getAll() async {
-    isLoading = true;
-    notifyListeners();
-
-    //return await repository.getAll();
-    final result = await repository.getAll();
-    
-    isLoading = false;
-    notifyListeners();
-    return result;
+    return await repository.getAll();
   }
 
-  @override
-  Future<int> delete(int id) async {
-    return await repository.delete(id);
-  }
+  Future<void> delete(int id) async {
+    await repository.delete(id);
 
-  @override
-  Future<Topic?> getById(int id) async {
-    return await repository.getById(id);
+    await loadTopics();
   }
 
   Topic? getTopicById(int id) {
