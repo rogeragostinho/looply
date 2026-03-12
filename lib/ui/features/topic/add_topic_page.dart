@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:looply/model/revision_cycle.dart';
 import 'package:looply/model/tag.dart';
 import 'package:looply/model/topic.dart';
-import 'package:looply/ui/core/app_state.dart';
-import 'package:looply/view_model/revision_cycle_view_model.dart';
-import 'package:looply/view_model/tag_view_model.dart';
-import 'package:looply/view_model/topic_view_model.dart';
+import 'package:looply/ui/core/state/app_state.dart';
+import 'package:looply/ui/core/widgets/app_top_bar.dart';
+import 'package:looply/ui/features/revision_cycle/revision_cycle_view_model.dart';
+import 'package:looply/ui/features/tag/tag_view_model.dart';
+import 'package:looply/ui/features/topic/topic_view_model.dart';
 import 'package:provider/provider.dart';
 
 class AddTopicPage extends StatefulWidget {
@@ -91,10 +92,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
 
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Add Topic"),
-        backgroundColor: Color(Colors.blue.toARGB32()),
-      ),
+      appBar: AppTopBar(title: "Novo Tópico"),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Form(
@@ -240,6 +238,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
 
                         if (mounted) {
                           Navigator.pop(context);
+                          //context.go(AppRoutes.topics);
                         }
                       } catch (e) {
                         // É bom capturar erros de banco de dados para não travar o botão em loading

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:looply/model/revision.dart' show Revision, Status;
 import 'package:looply/model/topic.dart';
-import 'package:looply/ui/core/app_state.dart';
-import 'package:looply/ui/pages/topic_details_page.dart';
+import 'package:looply/ui/core/state/app_state.dart';
+import 'package:looply/ui/core/widgets/app_top_bar.dart';
+import 'package:looply/ui/features/topic/topic_details_page.dart';
 import 'package:provider/provider.dart';
-import '../../core/enums/revision_status.dart';
+import '../../../core/enums/revision_status.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -21,8 +21,8 @@ class _HomePageState extends State<HomePage> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text("Home"),
+        appBar: AppTopBar(
+          title: "Início",
           bottom: const TabBar(
             tabs: [
               Tab(child: Text("HOJE")),
@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
               Tab(child: Text("POR VIR")),
             ],
           ),
-        ),
+        ) ,
         body: const TabBarView(
           children: [RevisionsTodayTab(), Text("2"), Text("3")],
         ),

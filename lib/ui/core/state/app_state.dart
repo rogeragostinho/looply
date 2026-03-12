@@ -3,9 +3,9 @@ import 'package:looply/model/topic.dart';
 import 'package:looply/repository/revision_cycle_repository.dart';
 import 'package:looply/repository/tag_repository.dart';
 import 'package:looply/repository/topic_repository.dart';
-import 'package:looply/view_model/revision_cycle_view_model.dart';
-import 'package:looply/view_model/tag_view_model.dart';
-import 'package:looply/view_model/topic_view_model.dart';
+import 'package:looply/ui/features/revision_cycle/revision_cycle_view_model.dart';
+import 'package:looply/ui/features/tag/tag_view_model.dart';
+import 'package:looply/ui/features/topic/topic_view_model.dart';
 
 class AppState extends ChangeNotifier{
   int currentPageIndex = 0;

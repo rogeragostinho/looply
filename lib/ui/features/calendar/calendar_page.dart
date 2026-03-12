@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:looply/ui/core/ui/page_app_bar.dart';
+import 'package:looply/ui/core/widgets/app_top_bar.dart';
 
 class CalendarPage extends StatelessWidget {
 
@@ -8,7 +8,7 @@ class CalendarPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PageAppBar(title: "Calendar"),
+      appBar: AppTopBar(title: "Calendar"),
       body: Center(child: Text("Calendar"),)
     );
   }

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:looply/ui/core/app_state.dart';
-import 'package:looply/ui/core/ui/page_app_bar.dart';
-import 'package:looply/model/topic.dart';
-import 'package:looply/ui/pages/topic_details_page.dart';
-import 'package:looply/view_model/topic_view_model.dart';
+import 'package:looply/ui/core/widgets/app_top_bar.dart';
+import 'package:looply/ui/features/topic/topic_view_model.dart';
+import 'package:looply/ui/features/topic/widgets/topics_list_view.dart';
 import 'package:provider/provider.dart';
 
 class TopicsPage extends StatefulWidget {
@@ -31,7 +29,6 @@ class _TopicsPageState extends State<TopicsPage> {
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<AppState>();
     final topicVM = context.watch<TopicViewModel>();
     //List<Topic>? topics = appState.topics;
 
@@ -43,16 +40,9 @@ class _TopicsPageState extends State<TopicsPage> {
       return const Center(child: Text("Nenhum tópico encontrado."));
     }
 
-    return ListView.builder(
-      itemCount: topicVM.topics.length,
-      itemBuilder: (context, index) {
-        final topic = topicVM.topics[index];
-        return ListTile(
-          title: Text(topic.name),
-          subtitle: Text(
-              "Revisões: ${topic.revisions!.length} - Tags: ${topic.tags.map((t) => t.name).join(', ')}"),
-        );
-      },
+    return Scaffold(
+      appBar: AppTopBar(title: "Tópicos"),
+      body: TopicsListView(topics: topicVM.topics)
     );
 
     /*return Scaffold(
