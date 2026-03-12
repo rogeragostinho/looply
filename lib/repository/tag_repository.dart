@@ -56,7 +56,7 @@ class TagRepository extends AbstractRepository<Tag> {
     if (tag.id == null) throw Exception("Tag id is null, cannot update.");
 
     return await dbconn.update(
-      DBTables.topics,
+      DBTables.tags,
       tag.toJson(), 
       where: '${TopicsColumns.colId} = ?',
       whereArgs: [tag.id],
