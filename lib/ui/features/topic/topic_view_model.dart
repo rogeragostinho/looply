@@ -4,9 +4,28 @@ import 'package:looply/repository/topic_repository.dart';
 import 'package:looply/core/view_model/abstract_view_model.dart';
 import '../../../core/enums/revision_status.dart';
 
+class TopicRevision {
+
+  final Topic topic;
+  final Revision revision;
+
+  TopicRevision(this.topic, this.revision);
+
+}
+
+/*
+final today = topicVM.getTodayRevisions();
+final overdue = topicVM.getOverdueRevisions();
+final upcoming = topicVM.getUpcomingRevisions();
+*/
+
 class TopicViewModel extends AbstractViewModel<Topic, TopicRepository> {
+
   List<Topic> topics = [];
   bool isLoading = true;
+
+  // lista otimizada para consultas
+  final List<TopicRevision> _topicRevisions = [];
 
   TopicViewModel(super.repository);
 
@@ -15,14 +34,46 @@ class TopicViewModel extends AbstractViewModel<Topic, TopicRepository> {
     notifyListeners();
   }
 
-  // ============ METODOS ==============
+  // ================================
+  // UTIL
+  // ================================
+
+  bool _isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year &&
+           a.month == b.month &&
+           a.day == b.day;
+  }
+
+  void _generateTopicRevisions() {
+    _topicRevisions.clear();
+
+    for (var topic in topics) {
+      for (var revision in topic.revisions!) {
+        _topicRevisions.add(TopicRevision(topic, revision));
+      }
+    }
+  }
+
+  // ================================
+  // LOAD
+  // ================================
+
   Future<void> loadTopics() async {
     _setLoading(true);
+
     topics = await repository.getAll();
+
+    _generateTopicRevisions();
+
     _setLoading(false);
   }
 
-  void insert(Topic topic) async {
+  // ================================
+  // INSERT
+  // ================================
+
+  Future<void> insert(Topic topic) async {
+
     final revisions = topic.revisionCycle.cycle
         .map(
           (days) => Revision(
@@ -36,28 +87,84 @@ class TopicViewModel extends AbstractViewModel<Topic, TopicRepository> {
 
     await repository.insert(topic);
 
-    // atualiza a lista após inserir
     await loadTopics();
   }
+
+  // ================================
+  // UPDATE
+  // ================================
 
   Future<void> update(Topic topic) async {
     await repository.update(topic);
-
     await loadTopics();
   }
 
-  Future<List<Topic>> getAll() async {
-    return await repository.getAll();
-  }
+  // ================================
+  // DELETE
+  // ================================
 
   Future<void> delete(int id) async {
     await repository.delete(id);
-
     await loadTopics();
   }
 
+  // ================================
+  // GET
+  // ================================
+
   Topic? getTopicById(int id) {
-    return topics.firstWhere((t) => t.id == id);
+    try {
+      return topics.firstWhere((t) => t.id == id);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // ================================
+  // REVISION FILTERS
+  // ================================
+
+  List<TopicRevision> getTodayRevisions() {
+    final today = DateTime.now();
+
+    return _topicRevisions.where((tr) {
+
+      if (tr.revision.status == RevisionStatus.done) {
+        return false;
+      }
+
+      return _isSameDay(tr.revision.date, today);
+
+    }).toList();
+  }
+
+  List<TopicRevision> getOverdueRevisions() {
+    final today = DateTime.now();
+
+    return _topicRevisions.where((tr) {
+
+      if (tr.revision.status == RevisionStatus.done) {
+        return false;
+      }
+
+      return tr.revision.date.isBefore(today) &&
+             !_isSameDay(tr.revision.date, today);
+
+    }).toList();
+  }
+
+  List<TopicRevision> getUpcomingRevisions() {
+    final today = DateTime.now();
+
+    return _topicRevisions.where((tr) {
+
+      if (tr.revision.status == RevisionStatus.done) {
+        return false;
+      }
+
+      return tr.revision.date.isAfter(today);
+
+    }).toList();
   }
 
 }

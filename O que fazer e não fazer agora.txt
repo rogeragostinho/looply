@@ -5,3 +5,4 @@ Arquitetura limpa, bem planejada (evitando problemas futuros)
 O que farei depois:
 Notificações (agendamentos, etc)
 Sincronização com o Google Drive
+Sincronização com o calendário

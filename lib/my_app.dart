@@ -20,9 +20,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AppState()),
-        ChangeNotifierProvider(create: (_) => TopicViewModel(TopicRepository())),
-        ChangeNotifierProvider(create: (_) => RevisionCycleViewModel(RevisionCycleRepository())),
-        ChangeNotifierProvider(create: (_) => TagViewModel(TagRepository()))
+        ChangeNotifierProvider(create: (_) => TopicViewModel(TopicRepository())..loadTopics()),  // .. cascade operator
+        ChangeNotifierProvider(create: (_) => RevisionCycleViewModel(RevisionCycleRepository())..loadRevisionCycles()),
+        ChangeNotifierProvider(create: (_) => TagViewModel(TagRepository())..loadTags())
       ],
       child: MaterialApp.router(
         title: AppConstants.appName,

@@ -24,7 +24,7 @@ class AppState extends ChangeNotifier{
     isLoadingTopics = true;
     notifyListeners();
 
-    final result = await TopicViewModel(TopicRepository()).getAll();
+    final result = await TopicRepository().getAll();
 
     topics = result ?? [];
     

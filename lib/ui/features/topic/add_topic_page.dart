@@ -1,12 +1,17 @@
+// add_topic_page.dart
 import 'package:flutter/material.dart';
-import 'package:looply/model/revision_cycle.dart';
-import 'package:looply/model/tag.dart';
+import 'package:go_router/go_router.dart';
 import 'package:looply/model/topic.dart';
-import 'package:looply/ui/core/state/app_state.dart';
+import 'package:looply/router/app_routes.dart';
 import 'package:looply/ui/core/widgets/app_top_bar.dart';
+import 'package:looply/ui/features/topic/widgets/topic_text_field.dart';
+import 'package:looply/ui/features/topic/widgets/date_picker_field.dart';
+import 'package:looply/ui/features/topic/widgets/revision_cycle_selector.dart';
+import 'package:looply/ui/features/topic/widgets/tag_selector.dart';
 import 'package:looply/ui/features/revision_cycle/revision_cycle_view_model.dart';
 import 'package:looply/ui/features/tag/tag_view_model.dart';
 import 'package:looply/ui/features/topic/topic_view_model.dart';
+import 'package:looply/model/revision_cycle.dart';
 import 'package:provider/provider.dart';
 
 class AddTopicPage extends StatefulWidget {
@@ -17,188 +22,110 @@ class AddTopicPage extends StatefulWidget {
 }
 
 class _AddTopicPageState extends State<AddTopicPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  final formTopicController = TextEditingController();
-  final formStudiedOnController = TextEditingController();
-  //int? idRevisionCycle = RevisionCycleService.instance.get(1).id;
+  final _formKey = GlobalKey<FormState>();
+  final topicController = TextEditingController();
+  final studiedOnController = TextEditingController();
   DateTime studiedOn = DateTime.now();
-  int? selectedRevisionCycleId;
-  RevisionCycle? selectedRevisionCycle;
-
-  bool _isSaving = false; // para o botão Create Topic
-
-  final Map<int, bool> selectedItems = {};
-
-  Future<void> _selectDate() async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-
-    setState(() {
-      if (pickedDate != null) {
-        studiedOn = pickedDate;
-        formStudiedOnController.text =
-            '${studiedOn.day}/${studiedOn.month}/${studiedOn.year}';
-
-        //formStudiedOnController.text  studiedOn.toString();
-      }
-    });
-  }
+  int? selectedCycleId;
+  RevisionCycle? selectedCycle;
+  bool isSaving = false;
+  final Map<int, bool> selectedTags = {};
 
   @override
   void initState() {
     super.initState();
 
-    final appState = context.read<AppState>();
-    appState.getRevisionCycles();
-    appState.getTags();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Carrega dados
+      final revisionVM = context.read<RevisionCycleViewModel>();
+      final tagVM = context.read<TagViewModel>();
+      
+      revisionVM.loadRevisionCycles();
+      tagVM.loadTags();
 
-    formStudiedOnController.text =
+      // Seleciona automaticamente o primeiro ciclo, se existir
+      if (revisionVM.revisionCycles.isNotEmpty) {
+        setState(() {
+          selectedCycle = revisionVM.revisionCycles.first;
+          selectedCycleId = selectedCycle!.id;
+        });
+      }
+    });
+
+    studiedOnController.text =
         '${studiedOn.day}/${studiedOn.month}/${studiedOn.year}';
-
-    /*for (var item in items) {
-      selectedItems[item['id']] = false;
-    }*/
   }
 
   @override
   void dispose() {
-    formTopicController.dispose();
-    formStudiedOnController.dispose();
+    topicController.dispose();
+    studiedOnController.dispose();
     super.dispose();
   }
 
-  String color = "amber";
+  void selectDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: studiedOn,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null) {
+      setState(() {
+        studiedOn = picked;
+        studiedOnController.text =
+            '${studiedOn.day}/${studiedOn.month}/${studiedOn.year}';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<AppState>();
-    var topisState = context.watch<TopicViewModel>();
-    var revisionCycleState = context.watch<RevisionCycleViewModel>();
-    var tagState = context.watch<TagViewModel>();
-
-    List<RevisionCycle>? revisionCycles = [];
-    revisionCycles.add(revisionCycleState.getDefault());
-    revisionCycles.addAll(appState.revisionCycles);
-
-    //List<Tag?> tags = appState.tags ?? [];
-    List<Tag?> tags = [];
-    tags.add(tagState.getDefault());
-    tags.addAll(appState.tags);
-
+    final revisionCycleVM = context.watch<RevisionCycleViewModel>();
+    final tagVM = context.watch<TagViewModel>();
+    final topicVM = context.read<TopicViewModel>();
 
     return Scaffold(
-      appBar: AppTopBar(title: "Novo Tópico"),
+      appBar: const AppTopBar(title: "Novo Tópico"),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                TextFormField(
-                  controller: formTopicController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    label: Text("Topic*"),
-                  ),
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return "Por favor, insira o tópico";
-                    }
-                    return null;
+              children: [
+                TopicTextField(controller: topicController, label: "Tópico*"),
+                const SizedBox(height: 25),
+                DatePickerField(
+                  controller: studiedOnController,
+                  onTap: selectDate,
+                ),
+                const SizedBox(height: 25),
+                const Text("Ciclo de Revisão"),
+                RevisionCycleSelector(
+                  cycles: revisionCycleVM.revisionCycles,
+                  selectedId: selectedCycleId,
+                  onChanged: (val) {
+                    setState(() {
+                      selectedCycleId = val;
+                      selectedCycle = revisionCycleVM.revisionCycles.firstWhere(
+                        (c) => c.id == val,
+                      );
+                    });
                   },
                 ),
-
-                SizedBox(height: 25.0),
-
-                TextFormField(
-                  readOnly: true,
-                  controller: formStudiedOnController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "StudiedOn",
-                    suffixIcon: IconButton(
-                      onPressed: _selectDate,
-                      icon: Icon(Icons.calendar_month),
-                    ),
-                  ),
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return "Por favor, insira a data";
-                    }
-                    return null;
+                const SizedBox(height: 25),
+                const Text("Tags"),
+                TagSelector(
+                  tags: tagVM.tags,
+                  selectedItems: selectedTags,
+                  onChanged: (id) {
+                    setState(() {
+                      selectedTags[id!] = !(selectedTags[id] ?? false);
+                    });
                   },
-                ),
-
-                SizedBox(height: 25.0),
-                Text("Revision Cycle"),
-
-                // Substitua todo o bloco do "if (revisionCycles == null) ... else" por este:
-                if (revisionCycles == null)
-                  const Center(child: CircularProgressIndicator())
-                else
-                  RadioGroup<int>(
-                    // O parâmetro correto para o estado atual no RadioGroup é groupValue
-                    groupValue: selectedRevisionCycleId,
-                    onChanged: (int? val) {
-                      setState(() {
-                        selectedRevisionCycleId = val;
-                        selectedRevisionCycle = revisionCycles.firstWhere(
-                          (t) => t.id == val,
-                        );
-                      });
-                    },
-                    child: Column(
-                      children: revisionCycles.map((revision) {
-                        return RadioListTile<int>(
-                          value: revision.id!,
-                          title: Text("${revision.name} ${revision.cycle}"),
-                          // Aqui dentro você NÃO coloca groupValue nem onChanged,
-                          // pois o RadioGroup pai já cuida disso.
-                        );
-                      }).toList(),
-                    ),
-                  ),
-
-                SizedBox(height: 25.0),
-
-                //TAGS
-                Text("Tags for you topic"),
-                ElevatedButton(
-                  onPressed: () => {},
-                  child: Text("Criar nova Tag"),
-                ),
-                Column(
-                  children: (tags ?? []).map((item) {
-                    if (item == null)
-                      return SizedBox.shrink(); // pula itens nulos
-                    int id = item.id!;
-                    String name = item.name ?? '';
-
-                    return CheckboxListTile(
-                      title: Text(name),
-                      value: selectedItems[id] ?? false,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          selectedItems[id] = value ?? false;
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
-
-                SizedBox(height: 6.0),
-                TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(),
-                  ),
                 ),
               ],
             ),
@@ -210,59 +137,43 @@ class _AddTopicPageState extends State<AddTopicPage> {
           width: double.infinity,
           height: 50,
           child: ElevatedButton(
-            // Se _isSaving for true, onPressed recebe null (botão fica cinza/desativado)
-            onPressed: _isSaving
+            onPressed: isSaving
                 ? null
-                : () async {
-                    if (_formKey.currentState!.validate() &&
-                        selectedRevisionCycle != null) {
-                      setState(() => _isSaving = true);
+                : () {
+                    if (_formKey.currentState!.validate()) {
+                      if (selectedCycle != null) {
+                        setState(() => isSaving = true);
 
-                      try {
-                        // Filtra as tags selecionadas transformando o Map em uma List<Tag>
-                        final selectedTagsList = (appState.tags ?? [])
-                            .whereType<
-                              Tag
-                            >() // Remove nulos e tipa corretamente
-                            .where((tag) => selectedItems[tag.id] == true)
+                        final selectedTagsList = tagVM.tags
+                            .where((t) => selectedTags[t.id] ?? false)
                             .toList();
 
-                        final topicVM = context.read<TopicViewModel>();                    
-
-                        topicVM.insert(Topic(
-                          formTopicController.text,
-                          selectedRevisionCycle!,
-                          selectedTagsList,
-                          studiedOn
-                        ));
-
-                        if (mounted) {
-                          Navigator.pop(context);
-                          //context.go(AppRoutes.topics);
-                        }
-                      } catch (e) {
-                        // É bom capturar erros de banco de dados para não travar o botão em loading
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Erro ao salvar: $e")),
-                          );
-                        }
-                      } finally {
-                        if (mounted) setState(() => _isSaving = false);
-                      }
-                    } else if (selectedRevisionCycle == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            "Por favor, selecione um ciclo de revisão",
+                        topicVM.insert(
+                          Topic(
+                            topicController.text,
+                            selectedCycle!,
+                            selectedTagsList,
+                            studiedOn,
                           ),
-                        ),
-                      );
+                        );
+
+                        context.go(AppRoutes.topics);
+                        setState(() => isSaving = false);
+                      } else {
+                        // Mostra mensagem caso não tenha ciclo de revisão selecionado
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Por favor, selecione um ciclo de revisão antes de criar o tópico.",
+                            ),
+                          ),
+                        );
+                      }
                     }
                   },
-            child: _isSaving
+            child: isSaving
                 ? const CircularProgressIndicator(color: Colors.white)
-                : const Text("Create Topic"),
+                : const Text("Criar Tópico"),
           ),
         ),
       ),

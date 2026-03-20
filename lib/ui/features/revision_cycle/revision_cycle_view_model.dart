@@ -47,7 +47,6 @@ class RevisionCycleViewModel extends AbstractViewModel<RevisionCycle, RevisionCy
     return await repository.getAll();
   }
 
-
   RevisionCycle getDefault() {
     return defaultRevisonCycle;
   }
