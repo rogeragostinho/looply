@@ -5,7 +5,6 @@ import 'package:looply/ui/core/widgets/app_scaffold.dart';
 import 'package:looply/ui/features/preference/preferences_page.dart';
 import 'package:looply/ui/features/calendar/calendar_page.dart';
 import 'package:looply/ui/features/home/home_page.dart';
-import 'package:looply/ui/features/revision_cycle/revision_cycles_page.dart';
 import 'package:looply/ui/features/tag/tags_page.dart';
 import 'package:looply/ui/features/topic/add_topic_page.dart';
 import 'package:looply/ui/features/topic/topic_details_page.dart';
@@ -68,10 +67,6 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.tags,
       builder: (context, state) => const TagsPage(),
-    ),
-    GoRoute(
-      path: AppRoutes.revisionCycles,
-      builder: (context, state) => const RevisionCyclesPage(),
     ),
   ],
 );

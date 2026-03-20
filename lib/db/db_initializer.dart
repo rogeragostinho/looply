@@ -11,7 +11,6 @@ class DbInitializer {
     final db = await DatabaseCon.instance;
 
     await _createTopicsTable(db);
-    await _createRevisionCycleTable(db);
     await _createTagsTable(db);
   }
 
@@ -26,16 +25,6 @@ class DbInitializer {
         ${TopicsColumns.colRevisions} TEXT,
         ${TopicsColumns.colImages} TEXT,
         ${TopicsColumns.colStudiedOn} TEXT
-      )
-    ''');
-  }
-
-  static Future<void> _createRevisionCycleTable(Database db) async {
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS ${DBTables.revisionCycle} (
-        ${RevisionCycleColumns.colId} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${RevisionCycleColumns.colName} TEXT,
-        ${RevisionCycleColumns.colCycle} TEXT
       )
     ''');
   }

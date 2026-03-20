@@ -10,5 +10,4 @@ class AppRoutes {
   static const String preferences = '/preferences';
   static const String calendar = '/calendar';
   static const String tags = '/tags';
-  static const String revisionCycles = '/revision_cycles';
 }

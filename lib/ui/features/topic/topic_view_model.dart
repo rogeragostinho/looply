@@ -74,7 +74,7 @@ class TopicViewModel extends AbstractViewModel<Topic, TopicRepository> {
 
   Future<void> insert(Topic topic) async {
 
-    final revisions = topic.revisionCycle.cycle
+    final revisions = topic.revisionCycle
         .map(
           (days) => Revision(
             date: topic.studiedOn.add(Duration(days: days)),

@@ -1,31 +1,50 @@
 // revision_cycle_selector.dart
 import 'package:flutter/material.dart';
-import 'package:looply/model/revision_cycle.dart';
+import 'package:looply/core/constants/topic_constants.dart';
 
 class RevisionCycleSelector extends StatelessWidget {
-  final List<RevisionCycle> cycles;
-  final int? selectedId;
-  final ValueChanged<int?> onChanged;
+  final ValueChanged<String?> onChanged;
+  final TextEditingController textController;
+  final String? selectedRevisionCycle;
 
   const RevisionCycleSelector({
     super.key,
-    required this.cycles,
-    required this.selectedId,
+
     required this.onChanged,
+    required this.textController,
+    required this.selectedRevisionCycle,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: cycles.map((cycle) {
-        return RadioListTile<int>(
-          value: cycle.id!,
-          groupValue: selectedId,
-          title: Text("${cycle.name} ${cycle.cycle}"),
+      children: [
+        RadioGroup(
+          groupValue: selectedRevisionCycle,
           onChanged: onChanged,
-        );
-      }).toList(),
+          child: Column(
+            children: <Widget>[
+              RadioListTile(
+                value: TopicConstants.selectDefaultRevisionCycle,
+                title: Text("Padrão ${TopicConstants.defaultRevisionCycle}"),
+              ),
+              RadioListTile(
+                value: TopicConstants.selectOtherRevisionCycle,
+                title: Text("Outro"),
+              ),
+            ],
+          ),
+        ),
+
+        selectedRevisionCycle == TopicConstants.selectOtherRevisionCycle
+            ? TextField(
+                controller: textController,
+                decoration: const InputDecoration(
+                  labelText: "Ciclo (ex: 1,3,7,15,30)",
+                ),
+              )
+            : SizedBox.shrink(),
+      ],
     );
   }
 }

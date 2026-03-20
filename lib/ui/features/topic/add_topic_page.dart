@@ -8,11 +8,10 @@ import 'package:looply/ui/features/topic/widgets/topic_text_field.dart';
 import 'package:looply/ui/features/topic/widgets/date_picker_field.dart';
 import 'package:looply/ui/features/topic/widgets/revision_cycle_selector.dart';
 import 'package:looply/ui/features/topic/widgets/tag_selector.dart';
-import 'package:looply/ui/features/revision_cycle/revision_cycle_view_model.dart';
 import 'package:looply/ui/features/tag/tag_view_model.dart';
 import 'package:looply/ui/features/topic/topic_view_model.dart';
-import 'package:looply/model/revision_cycle.dart';
 import 'package:provider/provider.dart';
+import 'package:looply/core/constants/topic_constants.dart';
 
 class AddTopicPage extends StatefulWidget {
   const AddTopicPage({super.key});
@@ -27,9 +26,13 @@ class _AddTopicPageState extends State<AddTopicPage> {
   final studiedOnController = TextEditingController();
   DateTime studiedOn = DateTime.now();
   int? selectedCycleId;
-  RevisionCycle? selectedCycle;
   bool isSaving = false;
   final Map<int, bool> selectedTags = {};
+
+  // ** TEMP **
+  String? _selectRevisionCycle = "default";
+  final revisionCycleController = TextEditingController();
+  //
 
   @override
   void initState() {
@@ -37,19 +40,10 @@ class _AddTopicPageState extends State<AddTopicPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Carrega dados
-      final revisionVM = context.read<RevisionCycleViewModel>();
       final tagVM = context.read<TagViewModel>();
       
-      revisionVM.loadRevisionCycles();
       tagVM.loadTags();
 
-      // Seleciona automaticamente o primeiro ciclo, se existir
-      if (revisionVM.revisionCycles.isNotEmpty) {
-        setState(() {
-          selectedCycle = revisionVM.revisionCycles.first;
-          selectedCycleId = selectedCycle!.id;
-        });
-      }
     });
 
     studiedOnController.text =
@@ -82,7 +76,6 @@ class _AddTopicPageState extends State<AddTopicPage> {
 
   @override
   Widget build(BuildContext context) {
-    final revisionCycleVM = context.watch<RevisionCycleViewModel>();
     final tagVM = context.watch<TagViewModel>();
     final topicVM = context.read<TopicViewModel>();
 
@@ -104,7 +97,19 @@ class _AddTopicPageState extends State<AddTopicPage> {
                 ),
                 const SizedBox(height: 25),
                 const Text("Ciclo de Revisão"),
+
+                Text(_selectRevisionCycle ?? ""),
                 RevisionCycleSelector(
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectRevisionCycle = value;  
+                    });
+                  }, 
+                  textController: revisionCycleController, 
+                  selectedRevisionCycle: _selectRevisionCycle
+                ),
+
+                /*RevisionCycleSelector(
                   cycles: revisionCycleVM.revisionCycles,
                   selectedId: selectedCycleId,
                   onChanged: (val) {
@@ -115,7 +120,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
                       );
                     });
                   },
-                ),
+                ),*/
                 const SizedBox(height: 25),
                 const Text("Tags"),
                 TagSelector(
@@ -141,17 +146,30 @@ class _AddTopicPageState extends State<AddTopicPage> {
                 ? null
                 : () {
                     if (_formKey.currentState!.validate()) {
-                      if (selectedCycle != null) {
+                      if (_selectRevisionCycle != null) { //retirar depois
                         setState(() => isSaving = true);
 
                         final selectedTagsList = tagVM.tags
                             .where((t) => selectedTags[t.id] ?? false)
                             .toList();
 
+                        List<int>? cycle;
+
+                        if (_selectRevisionCycle == TopicConstants.selectDefaultRevisionCycle) {
+                          cycle = TopicConstants.defaultRevisionCycle;
+                        } else if (_selectRevisionCycle == TopicConstants.selectOtherRevisionCycle) {
+                          final cycleText = revisionCycleController.text.trim();
+                          cycle = cycleText
+                            .split(',')
+                            .map((e) => int.tryParse(e.trim()))
+                            .whereType<int>()
+                            .toList();
+                        }
+
                         topicVM.insert(
                           Topic(
                             topicController.text,
-                            selectedCycle!,
+                            cycle!,
                             selectedTagsList,
                             studiedOn,
                           ),

@@ -17,9 +17,6 @@ class PreferencesPage extends StatelessWidget {
           ElevatedButton(onPressed: () {
             context.push(AppRoutes.tags);
           }, child: Text("Tags")),
-          ElevatedButton(onPressed: () {
-            context.push(AppRoutes.revisionCycles);
-          }, child: Text("Ciclos de revisão")),
         ],
       ),
     );
