@@ -5,12 +5,10 @@ import 'package:looply/core/view_model/abstract_view_model.dart';
 import '../../../core/enums/revision_status.dart';
 
 class TopicRevision {
-
   final Topic topic;
   final Revision revision;
 
   TopicRevision(this.topic, this.revision);
-
 }
 
 /*
@@ -20,7 +18,6 @@ final upcoming = topicVM.getUpcomingRevisions();
 */
 
 class TopicViewModel extends AbstractViewModel<Topic, TopicRepository> {
-
   List<Topic> topics = [];
   bool isLoading = true;
 
@@ -38,10 +35,8 @@ class TopicViewModel extends AbstractViewModel<Topic, TopicRepository> {
   // UTIL
   // ================================
 
-  bool _isSameDay(DateTime a, DateTime b) {
-    return a.year == b.year &&
-           a.month == b.month &&
-           a.day == b.day;
+  bool isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   void _generateTopicRevisions() {
@@ -54,10 +49,6 @@ class TopicViewModel extends AbstractViewModel<Topic, TopicRepository> {
     }
   }
 
-  // ================================
-  // LOAD
-  // ================================
-
   Future<void> loadTopics() async {
     _setLoading(true);
 
@@ -69,11 +60,10 @@ class TopicViewModel extends AbstractViewModel<Topic, TopicRepository> {
   }
 
   // ================================
-  // INSERT
+  // ********* CRUD *************
   // ================================
 
   Future<void> insert(Topic topic) async {
-
     final revisions = topic.revisionCycle
         .map(
           (days) => Revision(
@@ -90,34 +80,14 @@ class TopicViewModel extends AbstractViewModel<Topic, TopicRepository> {
     await loadTopics();
   }
 
-  // ================================
-  // UPDATE
-  // ================================
-
   Future<void> update(Topic topic) async {
     await repository.update(topic);
     await loadTopics();
   }
 
-  // ================================
-  // DELETE
-  // ================================
-
   Future<void> delete(int id) async {
     await repository.delete(id);
     await loadTopics();
-  }
-
-  // ================================
-  // GET
-  // ================================
-
-  Topic? getTopicById(int id) {
-    try {
-      return topics.firstWhere((t) => t.id == id);
-    } catch (_) {
-      return null;
-    }
   }
 
   // ================================
@@ -128,13 +98,11 @@ class TopicViewModel extends AbstractViewModel<Topic, TopicRepository> {
     final today = DateTime.now();
 
     return _topicRevisions.where((tr) {
-
       if (tr.revision.status == RevisionStatus.done) {
         return false;
       }
 
-      return _isSameDay(tr.revision.date, today);
-
+      return isSameDay(tr.revision.date, today);
     }).toList();
   }
 
@@ -142,14 +110,12 @@ class TopicViewModel extends AbstractViewModel<Topic, TopicRepository> {
     final today = DateTime.now();
 
     return _topicRevisions.where((tr) {
-
       if (tr.revision.status == RevisionStatus.done) {
         return false;
       }
 
       return tr.revision.date.isBefore(today) &&
-             !_isSameDay(tr.revision.date, today);
-
+          !isSameDay(tr.revision.date, today);
     }).toList();
   }
 
@@ -157,14 +123,69 @@ class TopicViewModel extends AbstractViewModel<Topic, TopicRepository> {
     final today = DateTime.now();
 
     return _topicRevisions.where((tr) {
-
       if (tr.revision.status == RevisionStatus.done) {
         return false;
       }
 
       return tr.revision.date.isAfter(today);
-
     }).toList();
   }
 
+  Future<void> markRevisionDone(Topic topic, Revision revision) async {
+    // marca a revisão
+    revision.status = RevisionStatus.done;
+
+    // atualiza o tópico no banco
+    await repository.update(topic);
+
+    // atualiza a lista interna de revisões para refletir a mudança
+    _generateTopicRevisions();
+
+    // notifica a UI
+    notifyListeners();
+  }
+
+  //==============================================
+  // FUNÇÃO CHAMADA QUANDO O APP É ABERTO em MyApp
+  //==============================================
+
+  Future<void> updateStatus() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    for (var topic in topics) {
+      bool topicChanged = false;
+
+      for (int i = 0; i < topic.revisions!.length; i++) {
+        final revision = topic.revisions![i];
+        final revisionDate = DateTime(
+          revision.date.year,
+          revision.date.month,
+          revision.date.day,
+        );
+
+        if (revisionDate.isBefore(today) &&
+            revision.status != RevisionStatus.done &&
+            revision.status != RevisionStatus.pending) {
+          topic.revisions![i].status = RevisionStatus.pending;
+          topicChanged = true;
+        }
+
+        if (revisionDate.isAfter(today) &&
+            revision.status != RevisionStatus.done &&
+            revision.status != RevisionStatus.upComing) {
+          topic.revisions![i].status = RevisionStatus.upComing;
+          topicChanged = true;
+        }
+      }
+
+      if (topicChanged) {
+        await repository.update(
+          topic,
+        ); // atualiza o banco apenas 1 vez por topic
+      }
+    }
+
+    notifyListeners();
+  }
 }

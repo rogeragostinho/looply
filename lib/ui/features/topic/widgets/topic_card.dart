@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:looply/model/topic.dart';
-import 'package:looply/model/revision.dart';
 import 'package:looply/core/enums/revision_status.dart';
+import 'package:looply/router/app_routes.dart';
 import 'package:looply/ui/features/topic/topic_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
 class TopicCard extends StatelessWidget {
   final Topic topic;
@@ -94,6 +95,9 @@ class TopicCard extends StatelessWidget {
                       ))
                   .toList(),
             ),
+            ElevatedButton(onPressed: () {
+              context.push(AppRoutes.topicDetail, extra: topic);
+            }, child: Text("Detalhes"))
           ],
         ),
       ),
