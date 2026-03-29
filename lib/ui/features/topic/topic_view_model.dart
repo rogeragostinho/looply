@@ -98,12 +98,14 @@ class TopicViewModel extends ChangeNotifier {
   }
 
   List<TopicRevision> getUpcomingRevisions() {
+    final today = Util.todayDate();
+
     return _topicRevisions.where((tr) {
       if (tr.revision.status == RevisionStatus.done) {
         return false;
       }
 
-      return tr.revision.date.isAfter(Util.todayDate());
+      return (tr.revision.date.isAfter(today) && tr.revision.date.isBefore(today.add(Duration(days: 4))));
     }).toList();
   }
 
