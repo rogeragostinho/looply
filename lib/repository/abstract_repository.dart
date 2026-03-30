@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:looply/db/database_con.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class AbstractRepository<T> {
 
+  @protected
   Future<Database> get db async {
     return await DatabaseCon.instance;
   }

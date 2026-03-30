@@ -6,9 +6,11 @@ import 'package:looply/ui/features/preference/preferences_page.dart';
 import 'package:looply/ui/features/calendar/calendar_page.dart';
 import 'package:looply/ui/features/home/home_page.dart';
 import 'package:looply/ui/features/tag/tags_page.dart';
+import 'package:looply/ui/features/topic/add_note_page.dart';
 import 'package:looply/ui/features/topic/add_topic_page.dart';
 import 'package:looply/ui/features/topic/topic_details_page.dart';
 import 'package:looply/ui/features/topic/topics_page.dart';
+import 'package:looply/ui/features/topic/view_image_page.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: AppRoutes.home,
@@ -62,6 +64,20 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final topic = state.extra as Topic;
         return TopicDetailsPage(topic: topic);
+      }
+    ),
+    GoRoute(
+      path: AppRoutes.topicAddNote,
+      builder: (context, state) {
+        final args = state.extra as AddNoteArgs;
+        return AddNotePage(args: args);
+      }
+    ),
+    GoRoute(
+      path: AppRoutes.topicViewImage,
+      builder: (context, state) {
+        final args = state.extra as ViewImageArgs;
+        return ViewImagePage(args: args);
       }
     ),
     GoRoute(

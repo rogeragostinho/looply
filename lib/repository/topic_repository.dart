@@ -59,7 +59,7 @@ class TopicRepository extends AbstractRepository<Topic> {
   Future<List<Topic>> getAll() async {
     final dbconn = await db;
 
-    final maps = await dbconn.query(DBTables.topics, orderBy: '${TopicsColumns.colStudiedOn} DESC');
+    final maps = await dbconn.query(DBTables.topics, orderBy: '${TopicsColumns.colId} DESC');
     return maps.map((map) => Topic.fromJson(map)).toList();
   }
 }

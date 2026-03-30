@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:looply/model/revision.dart';
 import 'package:looply/model/topic.dart';
+import 'package:looply/service/image_service.dart';
 import 'package:looply/service/topic_service.dart';
 import 'package:looply/utils/util.dart';
 import '../../../core/enums/revision_status.dart';
@@ -20,6 +21,7 @@ final upcoming = topicVM.getUpcomingRevisions();
 
 class TopicViewModel extends ChangeNotifier {
   final TopicService _service;
+  final ImageService _imageService;
 
   List<Topic> topics = [];
   bool isLoading = true;
@@ -27,7 +29,7 @@ class TopicViewModel extends ChangeNotifier {
   // lista otimizada para consultas
   final List<TopicRevision> _topicRevisions = [];
 
-  TopicViewModel(this._service);
+  TopicViewModel(this._service, this._imageService);
 
   void _setLoading(bool value) {
     isLoading = value;
@@ -105,7 +107,8 @@ class TopicViewModel extends ChangeNotifier {
         return false;
       }
 
-      return (tr.revision.date.isAfter(today) && tr.revision.date.isBefore(today.add(Duration(days: 4))));
+      return (tr.revision.date.isAfter(today) &&
+          tr.revision.date.isBefore(today.add(Duration(days: 4))));
     }).toList();
   }
 
@@ -121,6 +124,19 @@ class TopicViewModel extends ChangeNotifier {
   Future<void> updateStatus() async {
     await _service.updateStatus();
     loadTopics();
+    notifyListeners();
+  }
+
+  Future<void> addImage(Topic topic) async {
+    final String? path = await _imageService.pickAndSaveImage();
+    if (path == null) return;
+    await _service.addImage(topic, path);
+    await loadTopics();
+  }
+
+  Future<void> removeImage(Topic topic, String imagePath) async {
+    await _service.removeImage(topic, imagePath);
+    await loadTopics();
     notifyListeners();
   }
 }

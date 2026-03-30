@@ -4,8 +4,8 @@ class AppRoutes {
   static const String topics = '/topics';
   static const String topicAdd = '/topic/add';
   static const String topicDetail = '/topics/detail';
-  //static const String topicEdit = '/topics/edit';
-  //static const String  = '/';
+  static const String topicAddNote = '/topics/note/add';
+  static const String topicViewImage = '/topics/image';
 
   static const String preferences = '/preferences';
   static const String calendar = '/calendar';

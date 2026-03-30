@@ -66,7 +66,6 @@ class TopicService {
     final today = Util.todayDate();
 
     for (var topic in topics) {
-
       bool topicChanged = false;
 
       for (int i = 0; i < topic.revisions!.length; i++) {
@@ -96,5 +95,16 @@ class TopicService {
         await _repository.update(topic);
       }
     }
+  }
+
+  Future<void> addImage(Topic topic, String imagePath) async {
+    topic.imagesUrl ??= [];
+    topic.imagesUrl!.add(imagePath);
+    await _repository.update(topic);
+  }
+
+  Future<void> removeImage(Topic topic, String imagePath) async {
+    topic.imagesUrl?.remove(imagePath);
+    await _repository.update(topic);
   }
 }
