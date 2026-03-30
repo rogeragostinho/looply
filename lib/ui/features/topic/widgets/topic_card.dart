@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:looply/model/topic.dart';
 import 'package:looply/core/enums/revision_status.dart';
 import 'package:looply/router/app_routes.dart';
+import 'package:looply/ui/core/widgets/confirm_dialog.dart';
 import 'package:looply/ui/features/topic/topic_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -43,12 +44,23 @@ class TopicCard extends StatelessWidget {
                   child: Text(
                     topic.name,
                     style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => topicVM.delete(topic.id!),
+                  onPressed: () async {
+                    final confirmed = await ConfirmDialog.show(
+                      context,
+                      title: "Eliminar Tópico",
+                      isDanger: true
+                    );
+                    if (!confirmed) return;
+
+                    topicVM.delete(topic.id!);
+                  },
                 ),
               ],
             ),
@@ -69,8 +81,10 @@ class TopicCard extends StatelessWidget {
               runSpacing: 6,
               children: topic.revisions!.map((r) {
                 return Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: _statusColor(r.status),
                     borderRadius: BorderRadius.circular(8),
@@ -89,15 +103,20 @@ class TopicCard extends StatelessWidget {
             Wrap(
               spacing: 6,
               children: topic.tags
-                  .map((t) => Chip(
-                        label: Text(t.name),
-                        backgroundColor: Colors.blue.shade100,
-                      ))
+                  .map(
+                    (t) => Chip(
+                      label: Text(t.name),
+                      backgroundColor: Colors.blue.shade100,
+                    ),
+                  )
                   .toList(),
             ),
-            ElevatedButton(onPressed: () {
-              context.push(AppRoutes.topicDetail, extra: topic);
-            }, child: Text("Detalhes"))
+            ElevatedButton(
+              onPressed: () {
+                context.push(AppRoutes.topicDetail, extra: topic);
+              },
+              child: Text("Detalhes"),
+            ),
           ],
         ),
       ),

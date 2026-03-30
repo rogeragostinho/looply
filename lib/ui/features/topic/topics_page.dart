@@ -3,7 +3,6 @@ import 'package:looply/ui/core/widgets/app_top_bar.dart';
 import 'package:looply/ui/features/topic/topic_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:looply/ui/features/topic/widgets/topic_card.dart';
-import 'package:looply/model/tag.dart';
 
 class TopicsPage extends StatefulWidget {
   const TopicsPage({super.key});

@@ -8,6 +8,8 @@ import 'package:looply/ui/features/home/home_page.dart';
 import 'package:looply/ui/features/tag/tags_page.dart';
 import 'package:looply/ui/features/topic/add_note_page.dart';
 import 'package:looply/ui/features/topic/add_topic_page.dart';
+import 'package:looply/ui/features/topic/args/add_note_args.dart';
+import 'package:looply/ui/features/topic/args/view_image%20args.dart';
 import 'package:looply/ui/features/topic/topic_details_page.dart';
 import 'package:looply/ui/features/topic/topics_page.dart';
 import 'package:looply/ui/features/topic/view_image_page.dart';

@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:looply/model/note.dart';
-import 'package:looply/model/topic.dart';
 import 'package:looply/ui/core/widgets/app_top_bar.dart';
 import 'package:go_router/go_router.dart';
+import 'package:looply/ui/features/topic/args/add_note_args.dart';
 import 'package:looply/ui/features/topic/topic_view_model.dart';
 import 'package:provider/provider.dart';
-
-class AddNoteArgs {
-  final Topic topic;
-  final bool editMode;
-
-  AddNoteArgs({required this.topic, required this.editMode});
-}
 
 class AddNotePage extends StatefulWidget {
   final AddNoteArgs args;
@@ -24,42 +17,54 @@ class AddNotePage extends StatefulWidget {
 
 class _AddNotePageState extends State<AddNotePage> {
   final _formKey = GlobalKey<FormState>();
-
-  late TextEditingController titleController;
-  late TextEditingController contentController;
-
-  late bool editMode;
+  late final TextEditingController _titleController;
+  late final TextEditingController _contentController;
 
   @override
   void initState() {
     super.initState();
 
-    editMode = widget.args.editMode;
+    final topic = context.read<TopicViewModel>().getById(widget.args.topicId);
 
-    titleController = TextEditingController();
-    contentController = TextEditingController();
-
-    if (editMode) {
-      titleController.text = widget.args.topic.note?.title ?? "";
-      contentController.text = widget.args.topic.note?.content ?? "";
-    }
+    _titleController = TextEditingController(
+      text: widget.args.editMode ? topic?.note?.title ?? "" : "",
+    );
+    _contentController = TextEditingController(
+      text: widget.args.editMode ? topic?.note?.content ?? "" : "",
+    );
   }
 
   @override
   void dispose() {
-    titleController.dispose();
-    contentController.dispose();
+    _titleController.dispose();
+    _contentController.dispose();
     super.dispose();
+  }
+
+  void _save(TopicViewModel topicVM) {
+    if (!_formKey.currentState!.validate()) return;
+
+    final topic = topicVM.getById(widget.args.topicId);
+    if (topic == null) return;
+
+    if (widget.args.editMode) {
+      topic.note!.title = _titleController.text;
+      topic.note!.content = _contentController.text;
+    } else {
+      topic.note = Note(_titleController.text, _contentController.text);
+    }
+
+    topicVM.update(topic);
+    context.pop();
   }
 
   @override
   Widget build(BuildContext context) {
     final topicVM = context.watch<TopicViewModel>();
-    final topic = widget.args.topic;
 
     return Scaffold(
       appBar: AppTopBar(
-        title: editMode ? "Editar Nota" : "Adicionar Nota",
+        title: widget.args.editMode ? "Editar Nota" : "Adicionar Nota",
       ),
       body: SafeArea(
         child: Form(
@@ -67,31 +72,19 @@ class _AddNotePageState extends State<AddNotePage> {
           child: Column(
             children: [
               TextFormField(
-                controller: titleController,
-                decoration: const InputDecoration(
-                  labelText: "Título",
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Por favor, insira Título";
-                  }
-                  return null;
-                },
+                controller: _titleController,
+                decoration: const InputDecoration(labelText: "Título"),
+                validator: (value) =>
+                    value == null || value.isEmpty ? "Por favor, insira Título" : null,
               ),
               Expanded(
                 child: TextFormField(
-                  controller: contentController,
-                  decoration: const InputDecoration(
-                    labelText: "Conteúdo",
-                  ),
+                  controller: _contentController,
+                  decoration: const InputDecoration(labelText: "Conteúdo"),
                   maxLines: null,
                   expands: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Por favor, insira Conteúdo";
-                    }
-                    return null;
-                  },
+                  validator: (value) =>
+                      value == null || value.isEmpty ? "Por favor, insira Conteúdo" : null,
                 ),
               ),
             ],
@@ -102,28 +95,11 @@ class _AddNotePageState extends State<AddNotePage> {
         child: Row(
           children: [
             ElevatedButton(
-              onPressed: () {
-                context.pop();
-              },
+              onPressed: () => context.pop(),
               child: const Text("CANCELAR"),
             ),
             ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  if (editMode) {
-                    topic.note!.title = titleController.text;
-                    topic.note!.content = contentController.text;
-                  } else {
-                    topic.note = Note(
-                      titleController.text,
-                      contentController.text,
-                    );
-                  }
-
-                  topicVM.update(topic);
-                  context.pop();
-                }
-              },
+              onPressed: () => _save(topicVM),
               child: const Text("SALVAR"),
             ),
           ],

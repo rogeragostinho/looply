@@ -40,6 +40,7 @@ class RevisionCycleSelector extends StatelessWidget {
             ? TextField(
                 controller: textController,
                 decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
                   labelText: "Ciclo (ex: 1,3,7,15,30)",
                 ),
               )

@@ -22,62 +22,107 @@ class AddTopicPage extends StatefulWidget {
 
 class _AddTopicPageState extends State<AddTopicPage> {
   final _formKey = GlobalKey<FormState>();
-  final topicController = TextEditingController();
-  final studiedOnController = TextEditingController();
-  DateTime studiedOn = DateTime.now();
-  int? selectedCycleId;
-  bool isSaving = false;
-  final Map<int, bool> selectedTags = {};
+  final _topicController = TextEditingController();
+  final _studiedOnController = TextEditingController();
+  final _revisionCycleController = TextEditingController();
 
-  // ** TEMP **
-  String? _selectRevisionCycle = "default";
-  final revisionCycleController = TextEditingController();
-  //
+  DateTime _studiedOn = DateTime.now();
+  String? _selectedRevisionCycle = TopicConstants.selectDefaultRevisionCycle;
+  bool _isSaving = false;
+  final Map<int, bool> _selectedTags = {};
 
   @override
   void initState() {
     super.initState();
+    _studiedOnController.text =
+        '${_studiedOn.day}/${_studiedOn.month}/${_studiedOn.year}';
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Carrega dados
-      final tagVM = context.read<TagViewModel>();
-      
-      tagVM.loadTags();
-
+      context.read<TagViewModel>().loadTags();
     });
-
-    studiedOnController.text =
-        '${studiedOn.day}/${studiedOn.month}/${studiedOn.year}';
   }
 
   @override
   void dispose() {
-    topicController.dispose();
-    studiedOnController.dispose();
+    _topicController.dispose();
+    _studiedOnController.dispose();
+    _revisionCycleController.dispose();
     super.dispose();
   }
 
-  void selectDate() async {
+  void _selectDate() async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: studiedOn,
+      initialDate: _studiedOn,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-
     if (picked != null) {
       setState(() {
-        studiedOn = picked;
-        studiedOnController.text =
-            '${studiedOn.day}/${studiedOn.month}/${studiedOn.year}';
+        _studiedOn = picked;
+        _studiedOnController.text =
+            '${_studiedOn.day}/${_studiedOn.month}/${_studiedOn.year}';
       });
     }
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+    if (_selectedRevisionCycle == null) {
+      _showSnack(
+        "Por favor, selecione um ciclo de revisão antes de criar o tópico.",
+      );
+      return;
+    }
+
+    List<int>? cycle;
+
+    if (_selectedRevisionCycle == TopicConstants.selectDefaultRevisionCycle) {
+      cycle = TopicConstants.defaultRevisionCycle;
+    } else if (_selectedRevisionCycle ==
+        TopicConstants.selectOtherRevisionCycle) {
+      if (_revisionCycleController.text.isEmpty) {
+        _showSnack(
+          "Por favor, insira um ciclo de revisão antes de criar o tópico.",
+        );
+        return;
+      }
+      cycle = _revisionCycleController.text
+          .trim()
+          .split(',')
+          .map((e) => int.tryParse(e.trim()))
+          .whereType<int>()
+          .toList();
+    }
+
+    setState(() => _isSaving = true);
+
+    final tagVM = context.read<TagViewModel>();
+    final topicVM = context.read<TopicViewModel>();
+
+    final selectedTagsList = tagVM.tags
+        .where((t) => _selectedTags[t.id] ?? false)
+        .toList();
+
+    await topicVM.insert(
+      Topic(_topicController.text, cycle!, selectedTagsList, _studiedOn),
+    );
+
+    if (mounted) {
+      setState(() => _isSaving = false);
+      context.go(AppRoutes.topics);
+    }
+  }
+
+  void _showSnack(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
   Widget build(BuildContext context) {
     final tagVM = context.watch<TagViewModel>();
-    final topicVM = context.read<TopicViewModel>();
 
     return Scaffold(
       appBar: const AppTopBar(title: "Novo Tópico"),
@@ -89,48 +134,28 @@ class _AddTopicPageState extends State<AddTopicPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TopicTextField(controller: topicController, label: "Tópico*"),
+                TopicTextField(controller: _topicController, label: "Tópico*"),
                 const SizedBox(height: 25),
                 DatePickerField(
-                  controller: studiedOnController,
-                  onTap: selectDate,
+                  controller: _studiedOnController,
+                  onTap: _selectDate,
                 ),
                 const SizedBox(height: 25),
                 const Text("Ciclo de Revisão"),
-
-                Text(_selectRevisionCycle ?? ""),
                 RevisionCycleSelector(
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectRevisionCycle = value;  
-                    });
-                  }, 
-                  textController: revisionCycleController, 
-                  selectedRevisionCycle: _selectRevisionCycle
+                  onChanged: (value) =>
+                      setState(() => _selectedRevisionCycle = value),
+                  textController: _revisionCycleController,
+                  selectedRevisionCycle: _selectedRevisionCycle,
                 ),
-
-                /*RevisionCycleSelector(
-                  cycles: revisionCycleVM.revisionCycles,
-                  selectedId: selectedCycleId,
-                  onChanged: (val) {
-                    setState(() {
-                      selectedCycleId = val;
-                      selectedCycle = revisionCycleVM.revisionCycles.firstWhere(
-                        (c) => c.id == val,
-                      );
-                    });
-                  },
-                ),*/
                 const SizedBox(height: 25),
                 const Text("Tags"),
                 TagSelector(
                   tags: tagVM.tags,
-                  selectedItems: selectedTags,
-                  onChanged: (id) {
-                    setState(() {
-                      selectedTags[id!] = !(selectedTags[id] ?? false);
-                    });
-                  },
+                  selectedItems: _selectedTags,
+                  onChanged: (id) => setState(
+                    () => _selectedTags[id!] = !(_selectedTags[id] ?? false),
+                  ),
                 ),
               ],
             ),
@@ -142,54 +167,8 @@ class _AddTopicPageState extends State<AddTopicPage> {
           width: double.infinity,
           height: 50,
           child: ElevatedButton(
-            onPressed: isSaving
-                ? null
-                : () {
-                    if (_formKey.currentState!.validate()) {
-                      if (_selectRevisionCycle != null) { //retirar depois
-                        setState(() => isSaving = true);
-
-                        final selectedTagsList = tagVM.tags
-                            .where((t) => selectedTags[t.id] ?? false)
-                            .toList();
-
-                        List<int>? cycle;
-
-                        if (_selectRevisionCycle == TopicConstants.selectDefaultRevisionCycle) {
-                          cycle = TopicConstants.defaultRevisionCycle;
-                        } else if (_selectRevisionCycle == TopicConstants.selectOtherRevisionCycle) {
-                          final cycleText = revisionCycleController.text.trim();
-                          cycle = cycleText
-                            .split(',')
-                            .map((e) => int.tryParse(e.trim()))
-                            .whereType<int>()
-                            .toList();
-                        }
-
-                        topicVM.insert(
-                          Topic(
-                            topicController.text,
-                            cycle!,
-                            selectedTagsList,
-                            studiedOn,
-                          ),
-                        );
-
-                        context.go(AppRoutes.topics);
-                        setState(() => isSaving = false);
-                      } else {
-                        // Mostra mensagem caso não tenha ciclo de revisão selecionado
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              "Por favor, selecione um ciclo de revisão antes de criar o tópico.",
-                            ),
-                          ),
-                        );
-                      }
-                    }
-                  },
-            child: isSaving
+            onPressed: _isSaving ? null : _submit,
+            child: _isSaving
                 ? const CircularProgressIndicator(color: Colors.white)
                 : const Text("Criar Tópico"),
           ),

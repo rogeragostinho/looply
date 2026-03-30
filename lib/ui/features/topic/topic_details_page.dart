@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:looply/model/topic.dart';
 import 'package:looply/router/app_routes.dart';
-import 'package:looply/ui/features/topic/add_note_page.dart';
+import 'package:looply/ui/features/topic/args/add_note_args.dart';
+import 'package:looply/ui/features/topic/args/view_image%20args.dart';
 import 'package:looply/ui/features/topic/topic_view_model.dart';
-import 'package:looply/ui/features/topic/view_image_page.dart';
 import 'package:looply/ui/features/topic/widgets/topic_name_dialog.dart';
 import 'package:provider/provider.dart';
 
@@ -50,7 +50,7 @@ class _TopicDetailsPageState extends State<TopicDetailsPage> {
             ),
 
             Text(
-              "Tags:" +
+              "Tags:" 
                   "${widget.topic.tags.map((tag) {
                     return tag.name;
                   })}",
@@ -72,7 +72,7 @@ class _TopicDetailsPageState extends State<TopicDetailsPage> {
                             context.push(
                               AppRoutes.topicAddNote,
                               extra: AddNoteArgs(
-                                topic: widget.topic,
+                                topicId: widget.topic.id!,
                                 editMode: false,
                               ),
                             );
@@ -88,7 +88,7 @@ class _TopicDetailsPageState extends State<TopicDetailsPage> {
                             context.push(
                               AppRoutes.topicAddNote,
                               extra: AddNoteArgs(
-                                topic: widget.topic,
+                                topicId: widget.topic.id!,
                                 editMode: true,
                               ),
                             );
@@ -133,7 +133,7 @@ class _TopicDetailsPageState extends State<TopicDetailsPage> {
                           final imgPath = widget.topic.imagesUrl![index];
                           return GestureDetector(
                             onTap: () {
-                              context.push(AppRoutes.topicViewImage, extra: ViewImageArgs(topic: widget.topic, imageIndex: index));
+                              context.push(AppRoutes.topicViewImage, extra: ViewImageArgs(topicId: widget.topic.id!, imageIndex: index));
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),

@@ -62,6 +62,14 @@ class TopicViewModel extends ChangeNotifier {
     await loadTopics();
   }
 
+  Topic? getById(int id) {
+    try {
+      return topics.firstWhere((t) => t.id == id);
+    } on StateError {
+      return null;
+    }
+  }
+
   Future<void> update(Topic topic) async {
     await _service.update(topic);
     await loadTopics();

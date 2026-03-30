@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:looply/ui/core/widgets/confirm_dialog.dart';
 import 'package:looply/ui/features/topic/topic_view_model.dart';
 
 import 'package:go_router/go_router.dart';
@@ -47,7 +48,13 @@ class TopicRevisionCard extends StatelessWidget {
                     "Data de Revisão: ${topicRevision.revision.date.day}/${topicRevision.revision.date.month}",
                   ),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      final confirmed = await ConfirmDialog.show(
+                        context,
+                        title: "Marcar revisão como feita",
+                      );
+                      if (!confirmed) return;
+
                       topicVM.markRevisionDone(
                         topicRevision.topic,
                         topicRevision.revision,
