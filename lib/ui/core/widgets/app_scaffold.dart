@@ -19,9 +19,8 @@ class AppScaffold extends StatelessWidget {
         destinations: const [
           NavigationDestination(selectedIcon: Icon(Icons.home), icon: Icon(Icons.home_outlined), label: 'Inicio'),
           NavigationDestination(icon: Icon(Icons.topic), label: "Tópicos"),
-          NavigationDestination(icon: Badge(child: Icon(Icons.calendar_month)), label: "Calendário"),
+          //NavigationDestination(icon: Badge(child: Icon(Icons.calendar_month)), label: "Calendário"),
           NavigationDestination(icon: Icon(Icons.tune) , label: "Preferências"),
-          //NavigationDestination(icon:Badge(label: Text("2"), child: Icon(Icons.account_balance)), label: "Account"),
         ],
       ),
       floatingActionButton: FloatingActionButton(

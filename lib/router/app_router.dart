@@ -1,5 +1,4 @@
 import 'package:go_router/go_router.dart';
-import 'package:looply/model/topic.dart';
 import 'package:looply/router/app_routes.dart';
 import 'package:looply/ui/core/widgets/app_scaffold.dart';
 import 'package:looply/ui/features/preference/preferences_page.dart';
@@ -39,14 +38,14 @@ final GoRouter appRouter = GoRouter(
             ),
           ],
         ),
-        StatefulShellBranch(
+        /*StatefulShellBranch(
           routes: [
             GoRoute(
               path: AppRoutes.calendar,
               builder: (context, state) => const CalendarPage(),
             ),
           ],
-        ),
+        ),*/
         StatefulShellBranch(
           routes: [
             GoRoute(
