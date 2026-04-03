@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
-  const AppTopBar({super.key, required this.title, this.bottom});
+  const AppTopBar({super.key, required this.title, this.bottom, this.actions});
 
   final String title;
   final TabBar? bottom;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
@@ -12,6 +13,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(title), // widget.title, para Stateful
       backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       bottom: bottom,
+      actions: actions,
     );
   }
 
