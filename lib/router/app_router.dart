@@ -64,8 +64,8 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.topicDetail,
       builder: (context, state) {
-        final topic = state.extra as Topic;
-        return TopicDetailsPage(topic: topic);
+        final topicId = state.extra as int;
+        return TopicDetailsPage(topicId: topicId);
       }
     ),
     GoRoute(

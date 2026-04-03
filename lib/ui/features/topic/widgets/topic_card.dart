@@ -80,6 +80,20 @@ class TopicCard extends StatelessWidget {
               spacing: 8,
               runSpacing: 6,
               children: topic.revisions!.map((r) {
+
+                String status;
+
+                switch (r.status) {
+                case RevisionStatus.done:
+                  status = "feito";
+                  break;
+                case RevisionStatus.pending:
+                  status = "pendente";
+                  break;
+                default:
+                  status = "por vir";
+              }
+
                 return Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
@@ -90,7 +104,7 @@ class TopicCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    "${r.date.day}/${r.date.month} - ${r.status.name}",
+                    "${r.date.day}/${r.date.month} - $status",
                     style: const TextStyle(color: Colors.white, fontSize: 12),
                   ),
                 );
@@ -113,7 +127,7 @@ class TopicCard extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                context.push(AppRoutes.topicDetail, extra: topic);
+                context.push(AppRoutes.topicDetail, extra: topic.id!);
               },
               child: Text("Detalhes"),
             ),

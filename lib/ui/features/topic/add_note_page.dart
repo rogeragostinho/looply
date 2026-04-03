@@ -47,12 +47,7 @@ class _AddNotePageState extends State<AddNotePage> {
     final topic = topicVM.getById(widget.args.topicId);
     if (topic == null) return;
 
-    if (widget.args.editMode) {
-      topic.note!.title = _titleController.text;
-      topic.note!.content = _contentController.text;
-    } else {
-      topic.note = Note(_titleController.text, _contentController.text);
-    }
+    topic.note = Note(_titleController.text, _contentController.text);
 
     topicVM.update(topic);
     context.pop();
@@ -69,30 +64,44 @@ class _AddNotePageState extends State<AddNotePage> {
       body: SafeArea(
         child: Form(
           key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(labelText: "Título"),
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Por favor, insira Título" : null,
-              ),
-              Expanded(
-                child: TextFormField(
-                  controller: _contentController,
-                  decoration: const InputDecoration(labelText: "Conteúdo"),
-                  maxLines: null,
-                  expands: true,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? "Por favor, insira Conteúdo" : null,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _titleController,
+                  decoration: const InputDecoration(
+                    labelText: "Título",
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) => value == null || value.isEmpty
+                      ? "Por favor, insira Título"
+                      : null,
                 ),
-              ),
-            ],
+                SizedBox(height: 15),
+                Expanded(
+                  child: TextFormField(
+                    controller: _contentController,
+                    decoration: const InputDecoration(
+                      labelText: "Conteúdo",
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: null,
+                    expands: true,
+                    textAlignVertical: TextAlignVertical.top,
+                    validator: (value) => value == null || value.isEmpty
+                        ? "Por favor, insira Conteúdo"
+                        : null,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ElevatedButton(
               onPressed: () => context.pop(),

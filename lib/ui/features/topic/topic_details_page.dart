@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:looply/model/topic.dart';
+import 'package:looply/core/enums/revision_status.dart';
 import 'package:looply/router/app_routes.dart';
 import 'package:looply/ui/features/topic/args/add_note_args.dart';
 import 'package:looply/ui/features/topic/args/view_image%20args.dart';
@@ -10,23 +10,25 @@ import 'package:looply/ui/features/topic/topic_view_model.dart';
 import 'package:looply/ui/features/topic/widgets/topic_name_dialog.dart';
 import 'package:provider/provider.dart';
 
-class TopicDetailsPage extends StatefulWidget {
-  const TopicDetailsPage({super.key, required this.topic});
+class TopicDetailsPage extends StatelessWidget {
+  const TopicDetailsPage({super.key, required this.topicId});
 
-  final Topic topic;
+  final int topicId;
 
-  @override
-  State<TopicDetailsPage> createState() => _TopicDetailsPageState();
-}
-
-class _TopicDetailsPageState extends State<TopicDetailsPage> {
   @override
   Widget build(BuildContext context) {
-    final topicVM = context
-        .watch<TopicViewModel>(); // assiste às mudanças notificadas
+    final topicVM = context.watch<TopicViewModel>();
+    final topic = topicVM.getById(topicId);
+
+    if (topic == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text("Tópico")),
+        body: const Center(child: Text("Tópico não encontrado.")),
+      );
+    }
 
     return Scaffold(
-      appBar: AppBar(title: Text("Topic")),
+      appBar: AppBar(title: const Text("Tópico")),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,106 +36,152 @@ class _TopicDetailsPageState extends State<TopicDetailsPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(widget.topic.name),
+                Text(topic.name),
                 ElevatedButton.icon(
                   onPressed: () {
-                    //showDialog(context: context, builder: (context) => TagDialog());
                     showDialog(
                       context: context,
-                      builder: (context) =>
-                          TopicNameDialog(topic: widget.topic),
+                      builder: (context) => TopicNameDialog(topic: topic),
                     );
                   },
-                  label: Icon(Icons.edit),
+                  label: const Icon(Icons.edit),
                 ),
               ],
             ),
 
             Text(
-              "Tags:" 
-                  "${widget.topic.tags.map((tag) {
-                    return tag.name;
-                  })}",
+              "Tags: ${topic.tags.map((tag) => tag.name).join(', ')}",
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-            Text("Revision Timeline"),
-            ...widget.topic.revisions!.map((revision) {
-              return Text("${revision.date} - ${revision.status}");
+            const Text("Revision Timeline"),
+            ...topic.revisions!.map((revision) {
+              final day = revision.date.day;
+              final month = revision.date.month;
+              final year = revision.date.year;
+
+              String status;
+              Color color;
+
+              switch (revision.status) {
+                case RevisionStatus.done:
+                  status = "feito";
+                  color = Colors.green;
+                  break;
+                case RevisionStatus.pending:
+                  status = "pendente";
+                  color = Colors.orange;
+                  break;
+                default:
+                  status = "por vir";
+                  color = Colors.grey;
+              }
+
+              return Text(
+                "$day/$month/$year - $status",
+                style: TextStyle(color: color),
+              );
             }),
+
+            const SizedBox(height: 25),
+
             Card(
-              child: widget.topic.note == null
+              child: topic.note == null
                   ? Row(
                       children: [
-                        Text("Adicionar Nota"),
+                        const Text("Adicionar Nota"),
                         ElevatedButton(
                           onPressed: () {
                             context.push(
                               AppRoutes.topicAddNote,
                               extra: AddNoteArgs(
-                                topicId: widget.topic.id!,
+                                topicId: topicId,
                                 editMode: false,
                               ),
                             );
                           },
-                          child: Text("Adicionar"),
+                          child: const Text("Adicionar"),
                         ),
                       ],
                     )
                   : Column(
                       children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            context.push(
-                              AppRoutes.topicAddNote,
-                              extra: AddNoteArgs(
-                                topicId: widget.topic.id!,
-                                editMode: true,
+                        Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                context.push(
+                                  AppRoutes.topicAddNote,
+                                  extra: AddNoteArgs(
+                                    topicId: topicId,
+                                    editMode: true,
+                                  ),
+                                );
+                              },
+                              child: const Text("Editar"),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                topic.note = null;
+                                topicVM.update(topic);
+                              },
+                              child: const Text("Eliminar"),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text("Titulo: ${topic.note!.title}"),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                "Conteúdo: ${topic.note!.content}",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 3,
                               ),
-                            );
-                          },
-                          child: Text("Editar"),
+                            ),
+                          ],
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            widget.topic.note = null;
-                            topicVM.update(widget.topic);
-                          },
-                          child: Text("Eliminar"),
-                        ),
-                        Text("Titulo: ${widget.topic.note!.title}"),
-                        Text("Conteúdo: ${widget.topic.note!.content}"),
                       ],
                     ),
             ),
+
+            const SizedBox(height: 25),
+
             Card(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Text("Adicionar Imagens"),
+                      const Text("Adicionar Imagens"),
                       ElevatedButton(
-                        onPressed: () {
-                          topicVM.addImage(widget.topic);
-                        },
-                        child: Text("Adicionar"),
+                        onPressed: () => topicVM.addImage(topic),
+                        child: const Text("Adicionar"),
                       ),
                     ],
                   ),
-                  if (widget.topic.imagesUrl != null &&
-                      widget.topic.imagesUrl!.isNotEmpty)
+                  if (topic.imagesUrl != null && topic.imagesUrl!.isNotEmpty)
                     SizedBox(
                       height: 150,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: widget.topic.imagesUrl!.length,
+                        itemCount: topic.imagesUrl!.length,
                         itemBuilder: (context, index) {
-                          final imgPath = widget.topic.imagesUrl![index];
+                          final imgPath = topic.imagesUrl![index];
                           return GestureDetector(
                             onTap: () {
-                              context.push(AppRoutes.topicViewImage, extra: ViewImageArgs(topicId: widget.topic.id!, imageIndex: index));
+                              context.push(
+                                AppRoutes.topicViewImage,
+                                extra: ViewImageArgs(
+                                  topicId: topicId,
+                                  imageIndex: index,
+                                ),
+                              );
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
