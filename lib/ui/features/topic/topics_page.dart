@@ -41,12 +41,19 @@ class _TopicsPageState extends State<TopicsPage> {
 
     return Scaffold(
       appBar: const AppTopBar(title: "Tópicos"),
-      body: ListView.builder(
-        itemCount: filteredTopics.length,
-        itemBuilder: (context, index) {
-          final topic = filteredTopics[index];
-          return TopicCard(topic: topic);
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredTopics.length,
+              itemBuilder: (context, index) {
+                final topic = filteredTopics[index];
+                return TopicCard(topic: topic);
+              },
+            ),
+          ),
+          SizedBox(height: 40,)
+        ],
       ),
     );
   }

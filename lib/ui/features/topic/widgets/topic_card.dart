@@ -28,100 +28,97 @@ class TopicCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final topicVM = context.read<TopicViewModel>();
 
-    return CustomCard(
-      children: [
-        // Header com nome e botão deletar
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
-                topic.name,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: () => context.push(AppRoutes.topicDetail, extra: topic.id!),
+      child: CustomCard(
+        children: [
+          // Header com nome e botão deletar
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  topic.name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: () async {
-                final confirmed = await ConfirmDialog.show(
-                  context,
-                  title: "Eliminar Tópico",
-                  isDanger: true,
-                );
-                if (!confirmed) return;
-
-                topicVM.delete(topic.id!);
-              },
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 8),
-
-        // Data de estudo
-        Text(
-          "Data de estudo: ${topic.studiedOn.day}/${topic.studiedOn.month}/${topic.studiedOn.year}",
-          style: const TextStyle(color: Colors.grey),
-        ),
-
-        const SizedBox(height: 12),
-
-        // Revisões
-        Wrap(
-          spacing: 8,
-          runSpacing: 6,
-          children: topic.revisions!.map((r) {
-            String status;
-
-            switch (r.status) {
-              case RevisionStatus.done:
-                status = "feito";
-                break;
-              case RevisionStatus.pending:
-                status = "pendente";
-                break;
-              default:
-                status = "por vir";
-            }
-
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: _statusColor(r.status),
-                borderRadius: BorderRadius.circular(8),
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () async {
+                  final confirmed = await ConfirmDialog.show(
+                    context,
+                    title: "Eliminar Tópico",
+                    isDanger: true,
+                  );
+                  if (!confirmed) return;
+      
+                  topicVM.delete(topic.id!);
+                },
               ),
-              child: Text(
-                "${r.date.day}/${r.date.month} - $status",
-                style: const TextStyle(color: Colors.white, fontSize: 12),
-              ),
-            );
-          }).toList(),
-        ),
-
-        const SizedBox(height: 8),
-
-        // Tags
-        Wrap(
-          spacing: 6,
-          children: topic.tags
-              .map(
-                (t) => Chip(
-                  label: Text(t.name),
-                  backgroundColor: Colors.blue.shade100,
+            ],
+          ),
+      
+          const SizedBox(height: 8),
+      
+          // Data de estudo
+          Text(
+            "Data de estudo: ${topic.studiedOn.day}/${topic.studiedOn.month}/${topic.studiedOn.year}",
+            style: const TextStyle(color: Colors.grey),
+          ),
+      
+          const SizedBox(height: 12),
+      
+          // Revisões
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            children: topic.revisions!.map((r) {
+              String status;
+      
+              switch (r.status) {
+                case RevisionStatus.done:
+                  status = "feito";
+                  break;
+                case RevisionStatus.pending:
+                  status = "pendente";
+                  break;
+                default:
+                  status = "por vir";
+              }
+      
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _statusColor(r.status),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              )
-              .toList(),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            context.push(AppRoutes.topicDetail, extra: topic.id!);
-          },
-          child: Text("Detalhes"),
-        ),
-      ],
+                child: Text(
+                  "${r.date.day}/${r.date.month} - $status",
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              );
+            }).toList(),
+          ),
+      
+          const SizedBox(height: 8),
+      
+          // Tags
+          Wrap(
+            spacing: 6,
+            children: topic.tags
+                .map(
+                  (t) => Chip(
+                    label: Text(t.name),
+                    backgroundColor: Colors.blue.shade100,
+                  ),
+                )
+                .toList(),
+          ),
+        ],
+      ),
     );
   }
 }
