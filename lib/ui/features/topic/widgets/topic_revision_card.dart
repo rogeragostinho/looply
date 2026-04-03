@@ -39,7 +39,7 @@ class TopicRevisionCard extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 20),
-              Text(topicRevision.topic.name),
+              Text(topicRevision.topic.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
               SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
