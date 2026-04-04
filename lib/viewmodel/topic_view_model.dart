@@ -4,7 +4,7 @@ import 'package:looply/model/topic.dart';
 import 'package:looply/service/image_service.dart';
 import 'package:looply/service/topic_service.dart';
 import 'package:looply/utils/util.dart';
-import '../../../core/enums/revision_status.dart';
+import '../core/enums/revision_status.dart';
 
 class TopicRevision {
   final Topic topic;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:looply/model/topic.dart';
-import 'package:looply/ui/features/topic/topic_view_model.dart';
+import 'package:looply/viewmodel/topic_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:looply/model/tag.dart';
-import 'package:looply/ui/features/tag/tag_view_model.dart';
+import 'package:looply/viewmodel/tag_view_model.dart';
 import 'package:provider/provider.dart';
 
 class TagDialog extends StatelessWidget {

@@ -17,7 +17,6 @@ class TopicTextField extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
-        labelText: label,
       ),
       validator: (String? value) {
         if (value == null || value.isEmpty) {

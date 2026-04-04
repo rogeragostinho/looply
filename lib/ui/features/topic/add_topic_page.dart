@@ -1,4 +1,3 @@
-// add_topic_page.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:looply/model/topic.dart';
@@ -8,8 +7,8 @@ import 'package:looply/ui/features/topic/widgets/topic_text_field.dart';
 import 'package:looply/ui/features/topic/widgets/date_picker_field.dart';
 import 'package:looply/ui/features/topic/widgets/revision_cycle_selector.dart';
 import 'package:looply/ui/features/topic/widgets/tag_selector.dart';
-import 'package:looply/ui/features/tag/tag_view_model.dart';
-import 'package:looply/ui/features/topic/topic_view_model.dart';
+import 'package:looply/viewmodel/tag_view_model.dart';
+import 'package:looply/viewmodel/topic_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:looply/core/constants/topic_constants.dart';
 
@@ -69,9 +68,7 @@ class _AddTopicPageState extends State<AddTopicPage> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedRevisionCycle == null) {
-      _showSnack(
-        "Por favor, selecione um ciclo de revisão antes de criar o tópico.",
-      );
+      _showSnack("Por favor, selecione um ciclo de revisão antes de criar o tópico.");
       return;
     }
 
@@ -79,12 +76,9 @@ class _AddTopicPageState extends State<AddTopicPage> {
 
     if (_selectedRevisionCycle == TopicConstants.selectDefaultRevisionCycle) {
       cycle = TopicConstants.defaultRevisionCycle;
-    } else if (_selectedRevisionCycle ==
-        TopicConstants.selectOtherRevisionCycle) {
+    } else if (_selectedRevisionCycle == TopicConstants.selectOtherRevisionCycle) {
       if (_revisionCycleController.text.isEmpty) {
-        _showSnack(
-          "Por favor, insira um ciclo de revisão antes de criar o tópico.",
-        );
+        _showSnack("Por favor, insira um ciclo de revisão antes de criar o tópico.");
         return;
       }
       cycle = _revisionCycleController.text
@@ -115,65 +109,119 @@ class _AddTopicPageState extends State<AddTopicPage> {
   }
 
   void _showSnack(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final tagVM = context.watch<TagViewModel>();
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
       appBar: const AppTopBar(title: "Novo Tópico"),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TopicTextField(controller: _topicController, label: "Tópico*"),
-                const SizedBox(height: 25),
-                DatePickerField(
-                  controller: _studiedOnController,
-                  onTap: _selectDate,
-                ),
-                const SizedBox(height: 25),
-                const Text("Ciclo de Revisão"),
-                RevisionCycleSelector(
-                  onChanged: (value) =>
-                      setState(() => _selectedRevisionCycle = value),
-                  textController: _revisionCycleController,
-                  selectedRevisionCycle: _selectedRevisionCycle,
-                ),
-                const SizedBox(height: 25),
-                const Text("Tags"),
-                TagSelector(
-                  tags: tagVM.tags,
-                  selectedItems: _selectedTags,
-                  onChanged: (id) => setState(
-                    () => _selectedTags[id!] = !(_selectedTags[id] ?? false),
-                  ),
-                ),
-              ],
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          children: [
+            // ── Nome ──────────────────────────────────────
+            _SectionLabel(label: "Nome do tópico"),
+            const SizedBox(height: 8),
+            TopicTextField(controller: _topicController, label: "Tópico*"),
+
+            const SizedBox(height: 24),
+
+            // ── Data de estudo ────────────────────────────
+            _SectionLabel(label: "Data de estudo"),
+            const SizedBox(height: 8),
+            DatePickerField(
+              controller: _studiedOnController,
+              onTap: _selectDate,
             ),
-          ),
+
+            const SizedBox(height: 24),
+
+            // ── Ciclo de revisão ──────────────────────────
+            _SectionLabel(label: "Ciclo de revisão"),
+            const SizedBox(height: 8),
+            RevisionCycleSelector(
+              onChanged: (value) =>
+                  setState(() => _selectedRevisionCycle = value),
+              textController: _revisionCycleController,
+              selectedRevisionCycle: _selectedRevisionCycle,
+            ),
+
+            const SizedBox(height: 24),
+
+            // ── Tags ──────────────────────────────────────
+            _SectionLabel(label: "Tags"),
+            const SizedBox(height: 8),
+            TagSelector(
+              tags: tagVM.tags,
+              selectedItems: _selectedTags,
+              onChanged: (id) => setState(
+                () => _selectedTags[id!] = !(_selectedTags[id] ?? false),
+              ),
+            ),
+
+            const SizedBox(height: 100),
+          ],
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        child: SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton(
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          child: FilledButton(
             onPressed: _isSaving ? null : _submit,
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(52),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
             child: _isSaving
-                ? const CircularProgressIndicator(color: Colors.white)
-                : const Text("Criar Tópico"),
+                ? SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      color: colorScheme.onPrimary,
+                      strokeWidth: 2.5,
+                    ),
+                  )
+                : const Text(
+                    "Criar Tópico",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
           ),
         ),
       ),
+    );
+  }
+}
+
+// ── Widget auxiliar ───────────────────────────────────────────────────────────
+
+class _SectionLabel extends StatelessWidget {
+  final String label;
+  const _SectionLabel({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label.toUpperCase(),
+      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            letterSpacing: 1.2,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+          ),
     );
   }
 }

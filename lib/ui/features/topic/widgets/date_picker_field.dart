@@ -18,7 +18,6 @@ class DatePickerField extends StatelessWidget {
       readOnly: true,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
-        labelText: "Data de estudo",
         suffixIcon: IconButton(
           onPressed: onTap,
           icon: const Icon(Icons.calendar_month),
