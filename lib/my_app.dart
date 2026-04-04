@@ -6,9 +6,11 @@ import 'package:looply/router/app_router.dart';
 import 'package:looply/repository/tag_repository.dart';
 import 'package:looply/repository/topic_repository.dart';
 import 'package:looply/service/image_service.dart';
+import 'package:looply/service/import_export_service.dart';
 import 'package:looply/service/topic_service.dart';
-import 'package:looply/ui/features/tag/tag_view_model.dart';
-import 'package:looply/ui/features/topic/topic_view_model.dart';
+import 'package:looply/viewmodel/import_export_view_model.dart';
+import 'package:looply/viewmodel/tag_view_model.dart';
+import 'package:looply/viewmodel/topic_view_model.dart';
 import 'package:provider/provider.dart';
 
 class MyApp extends StatelessWidget {
@@ -26,6 +28,14 @@ class MyApp extends StatelessWidget {
         ), // .. cascade operator
         ChangeNotifierProvider(
           create: (_) => TagViewModel(TagRepository())..loadTags(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ImportExportViewModel(
+            ImportExportService(
+              tagRepository: TagRepository(),
+              topicRepository: TopicRepository(),
+            ),
+          ),
         ),
       ],
       child: MaterialApp.router(
