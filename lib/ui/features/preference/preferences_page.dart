@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:looply/service/notification_service.dart';
 import 'package:looply/viewmodel/import_export_view_model.dart';
+import 'package:looply/viewmodel/notification_view_model.dart';
 import 'package:looply/viewmodel/tag_view_model.dart';
 import 'package:looply/viewmodel/topic_view_model.dart';
 import 'package:provider/provider.dart';
@@ -64,6 +66,68 @@ class PreferencesPage extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: 24),
+
+          // ── Notificações ──────────────────────────────────────
+          _SectionHeader(label: "Notificações"),
+          const SizedBox(height: 8),
+          Consumer<NotificationViewModel>(
+            builder: (context, vm, _) {
+              if (!vm.loaded) return const SizedBox.shrink();
+
+              return Card(
+                margin: EdgeInsets.zero,
+                clipBehavior: Clip.antiAlias,
+                child: Column(
+                  children: [
+                    SwitchListTile(
+                      secondary: Icon(
+                        Icons.notifications_outlined,
+                        color: colorScheme.onSurface.withOpacity(0.75),
+                      ),
+                      title: const Text('Lembrete diário'),
+                      value: vm.enabled,
+                      onChanged: vm.setEnabled,
+                    ),
+                    if (vm.enabled) ...[
+                      const Divider(height: 1, indent: 56),
+                      _SettingsTile(
+                        icon: Icons.schedule_outlined,
+                        label: 'Hora do lembrete',
+                        subtitle: vm.time.format(context),
+                        onTap: () async {
+                          final picked = await showTimePicker(
+                            context: context,
+                            initialTime: vm.time,
+                          );
+                          if (picked != null) vm.setTime(picked);
+                        },
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            },
+          ),
+
+          // Teste
+          _SettingsTile(
+            icon: Icons.bug_report_outlined,
+            label: 'Testar notificação (1 min)',
+            onTap: () async {
+              print('🟡 Botão de teste carregado');
+              await NotificationService().scheduleTestNotification();
+              print('🟢 scheduleTestNotification() concluído');
+            },
+          ),
+
+          _SettingsTile(
+            icon: Icons.flash_on_outlined,
+            label: 'Testar notificação imediata',
+            onTap: () async {
+              await NotificationService().showInstantNotification();
+            },
           ),
         ],
       ),
@@ -135,10 +199,10 @@ class _SectionHeader extends StatelessWidget {
       child: Text(
         label.toUpperCase(),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              letterSpacing: 1.2,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-            ),
+          letterSpacing: 1.2,
+          fontWeight: FontWeight.w600,
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+        ),
       ),
     );
   }
@@ -147,12 +211,14 @@ class _SectionHeader extends StatelessWidget {
 class _SettingsTile extends StatelessWidget {
   final IconData icon;
   final String label;
+  final String? subtitle; // ← adiciona isto
   final VoidCallback? onTap;
   final bool isLoading;
 
   const _SettingsTile({
     required this.icon,
     required this.label,
+    this.subtitle, // ← e aqui
     this.onTap,
     this.isLoading = false,
   });
@@ -164,6 +230,9 @@ class _SettingsTile extends StatelessWidget {
     return ListTile(
       leading: Icon(icon, color: colorScheme.onSurface.withOpacity(0.75)),
       title: Text(label),
+      subtitle: subtitle != null
+          ? Text(subtitle!)
+          : null, // ← adiciona esta linha
       trailing: isLoading
           ? SizedBox(
               width: 18,

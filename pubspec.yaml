@@ -37,12 +37,14 @@ dependencies:
   provider: ^6.1.5+1
   sqflite: ^2.4.2
   path: ^1.9.1
-  flutter_local_notifications: ^20.1.0
+  flutter_local_notifications: ^21.0.0
   go_router: ^14.0.0
   image_picker: ^1.2.1   # para pegar imagens da galeria
   path_provider: ^2.1.5   # para achar pastas locais
   permission_handler: ^11.3.1
   file_picker: ^8.0.0
+  timezone: ^0.11.0
+  shared_preferences: ^2.3.0
 
 dev_dependencies:
   flutter_test:

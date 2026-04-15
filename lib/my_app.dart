@@ -9,6 +9,7 @@ import 'package:looply/service/image_service.dart';
 import 'package:looply/service/import_export_service.dart';
 import 'package:looply/service/topic_service.dart';
 import 'package:looply/viewmodel/import_export_view_model.dart';
+import 'package:looply/viewmodel/notification_view_model.dart';
 import 'package:looply/viewmodel/tag_view_model.dart';
 import 'package:looply/viewmodel/topic_view_model.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
+        ChangeNotifierProvider(create: (_) => NotificationViewModel()..load()),
       ],
       child: MaterialApp.router(
         title: AppConstants.appName,
