@@ -13,7 +13,7 @@
         android:text="📚 Looply"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:textColor="#1A1A1A"
+        android:textColor="#7C3AED"
         android:layout_marginBottom="10dp" />
 
     <!-- Linha: Hoje -->
@@ -29,7 +29,7 @@
             android:layout_weight="1"
             android:text="Hoje"
             android:textSize="13sp"
-            android:textColor="#5A5A5A" />
+            android:textColor="#A0A0A0" />
 
         <TextView
             android:id="@+id/widget_today_value"
@@ -38,7 +38,7 @@
             android:text="0"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#1A1A1A" />
+            android:textColor="#2563EB" />
     </LinearLayout>
 
     <!-- Linha: Pendentes -->
@@ -53,7 +53,7 @@
             android:layout_weight="1"
             android:text="Pendentes"
             android:textSize="13sp"
-            android:textColor="#5A5A5A" />
+            android:textColor="#A0A0A0" />
 
         <TextView
             android:id="@+id/widget_pending_value"
@@ -62,7 +62,7 @@
             android:text="0"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#D9534F" />
+            android:textColor="#FF6B6B" />
     </LinearLayout>
 
     <!-- Mensagem de "tudo em dia", visível apenas quando hoje=0 e pendentes=0 -->
@@ -72,7 +72,7 @@
         android:layout_height="wrap_content"
         android:text="🎉 Tudo em dia!"
         android:textSize="12sp"
-        android:textColor="#3E8E41"
+        android:textColor="#66BB6A"
         android:layout_marginTop="8dp"
         android:visibility="gone" />
 
