@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
@@ -125,11 +127,31 @@ class NotificationService {
     return await android?.canScheduleExactNotifications() ?? false;
   }
 
+  Future<void> scheduleTestNotificationViaTimer() async {
+
+    final canExact = await _plugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.canScheduleExactNotifications();
+    print('Pode agendar exacto: $canExact');
+
+    print('⏱️ Timer iniciado, a disparar em 5 segundos...');
+
+    Timer(const Duration(seconds: 5), () async {
+      print('🔔 Timer disparou, a mostrar notificação...');
+      await showInstantNotification();
+    });
+  }
+
   // Teste
   Future<void> scheduleTestNotification() async {
-    // Pede permissão de alarme exacto se necessário
+    // Permissão de alarme exacto (Android 12+)
     if (!await Permission.scheduleExactAlarm.isGranted) {
       await Permission.scheduleExactAlarm.request();
+    }
+
+    // Excluir a app da otimização de bateria (MIUI, EMUI, etc. bloqueiam sem isto)
+    if (!await Permission.ignoreBatteryOptimizations.isGranted) {
+      await Permission.ignoreBatteryOptimizations.request();
     }
 
     final now = tz.TZDateTime.now(tz.local);
@@ -144,14 +166,16 @@ class NotificationService {
       scheduledDate: scheduled,
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
-          'looply_daily',
+          'looply_daily_test',
           'Revisões diárias',
-          importance: Importance.high,
+          channelDescription: 'Reminder to complete daily habits',
+          importance: Importance.max,
           priority: Priority.high,
         ),
         iOS: DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
     );
 
     print('✅ Agendado');

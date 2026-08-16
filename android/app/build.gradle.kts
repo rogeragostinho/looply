@@ -38,7 +38,7 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix = ".debug"  // vira com.nuveka.velami.debug
+            applicationIdSuffix = ".debug"  // vira com.velami.debug
         }
         release {
             // TODO: Add your own signing config for the release build.

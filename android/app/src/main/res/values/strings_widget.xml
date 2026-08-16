@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Se já existir um res/values/strings.xml no projeto, mova esta
+         linha para lá em vez de manter este ficheiro separado. -->
+    <string name="looply_widget_description">Revisões de hoje e pendentes do Looply</string>
+</resources>

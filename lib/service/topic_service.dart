@@ -3,6 +3,7 @@ import 'package:looply/model/revision.dart';
 import 'package:looply/model/topic.dart';
 import 'package:looply/repository/topic_repository.dart';
 import 'package:looply/utils/util.dart';
+import 'package:looply/widgets/looply_widget_service.dart';
 
 class TopicService {
   final TopicRepository _repository;
@@ -13,16 +14,18 @@ class TopicService {
     final revisions = topic.revisionCycle
         .map(
           (days) => Revision(
-            date: topic.studiedOn.add(Duration(days: days)),
-            status: RevisionStatus.upComing,
-          ),
-        )
+        date: topic.studiedOn.add(Duration(days: days)),
+        status: RevisionStatus.upComing,
+      ),
+    )
         .toList();
 
     topic.revisions = revisions;
 
     await _checkPendingReviewsNewTopic(topic);
-    return await _repository.insert(topic);
+    final result = await _repository.insert(topic);
+    await refreshLooplyWidget();
+    return result;
   }
 
   Future<int> update(Topic topic) async {
@@ -57,7 +60,9 @@ class TopicService {
 
   Future<int> makRevisionDone(Topic topic, Revision revision) async {
     revision.status = RevisionStatus.done;
-    return await _repository.update(topic);
+    final result = await _repository.update(topic);
+    await refreshLooplyWidget();
+    return result;
   }
 
   Future<void> updateStatus() async {
@@ -95,6 +100,8 @@ class TopicService {
         await _repository.update(topic);
       }
     }
+
+    await refreshLooplyWidget();
   }
 
   Future<void> addImage(Topic topic, String imagePath) async {
