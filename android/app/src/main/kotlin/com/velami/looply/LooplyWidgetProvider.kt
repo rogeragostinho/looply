@@ -10,6 +10,8 @@ import android.content.Intent
 import android.widget.RemoteViews
 import es.antonborri.home_widget.HomeWidgetPlugin
 import java.util.Calendar
+import android.content.res.Configuration
+import androidx.core.content.ContextCompat
 
 class LooplyWidgetProvider : AppWidgetProvider() {
 

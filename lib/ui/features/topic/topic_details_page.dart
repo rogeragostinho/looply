@@ -332,6 +332,9 @@ class _EmptyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Card(
       margin: EdgeInsets.zero,
       child: Padding(
@@ -350,7 +353,7 @@ class _EmptyCard extends StatelessWidget {
             ),
             FilledButton.tonal(
               onPressed: onPressed,
-              child: Text(buttonLabel),
+              child: Text(buttonLabel, style: TextStyle(color: isDark ? Colors.black : Colors.white)),
             ),
           ],
         ),

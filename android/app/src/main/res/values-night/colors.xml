@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Não usando no momento-->
+<resources>
+    <color name="widget_background">#000000</color>
+    <color name="widget_border">#2A2A2A</color>
+    <color name="widget_label">#A0A0A0</color>
+    <color name="widget_today_value">#39FF14</color>
+    <color name="widget_pending_value">#FF3B3B</color>
+</resources>

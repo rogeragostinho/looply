@@ -32,13 +32,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="029a55f0-062a-45ce-952e-f3cc2ba4db73" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/android/app/src/main/res/values-night/colors.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/app/src/main/res/values/colors.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/src/main/kotlin/com/velami/looply/LooplyWidgetProvider.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/kotlin/com/velami/looply/LooplyWidgetProvider.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/ui/features/topic/topics_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/features/topic/topics_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/widgets/looply_widget_mapper.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/looply_widget_mapper.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/widgets/looply_widget_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/looply_widget_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable/looply_widget_background.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/drawable/looply_widget_background.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/layout/looply_widget.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/layout/looply_widget.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/core/theme/app_theme.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/theme/app_theme.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/my_app.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/my_app.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/ui/core/widgets/app_scaffold.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/core/widgets/app_scaffold.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/ui/features/topic/add_topic_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/features/topic/add_topic_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/ui/features/topic/topic_details_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/features/topic/topic_details_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/ui/features/topic/widgets/topic_name_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/features/topic/widgets/topic_name_dialog.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +53,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[PhysicalDevice::serial=085462528F002124]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$/android">
       <ProjectState />
@@ -83,6 +88,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Dart File" />
+        <option value="valueResourceFile" />
       </list>
     </option>
   </component>
@@ -128,7 +134,7 @@
     "show.migrate.to.gradle.popup": "false"
   }
 }]]></component>
-  <component name="RunManager" selected="Android App.app">
+  <component name="RunManager" selected="Flutter.main.dart">
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
       <module name="android.app" />
       <option name="ANDROID_RUN_CONFIGURATION_SCHEMA_VERSION" value="1" />

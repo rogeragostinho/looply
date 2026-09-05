@@ -39,9 +39,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#2563EB" />
+            android:fontFamily="sans-serif-black"
+            android:textColor="#39FF14" />
     </LinearLayout>
 
     <!-- Linha: Pendentes -->
@@ -63,9 +64,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#FF6B6B" />
+            android:fontFamily="sans-serif-black"
+            android:textColor="#FF3B3B" />
     </LinearLayout>
 
     <!-- Mensagem de "tudo em dia", visível apenas quando hoje=0 e pendentes=0 -->

@@ -9,6 +9,10 @@ class AppScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = isDark ? Colors.black : Colors.white;
+
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: NavigationBar(
@@ -16,11 +20,11 @@ class AppScaffold extends StatelessWidget {
         onDestinationSelected: (index) { // Volta ao root da tab ao clicar nela novamente
           navigationShell.goBranch(index, initialLocation: index == navigationShell.currentIndex,);
         },
-        destinations: const [
-          NavigationDestination(selectedIcon: Icon(Icons.home), icon: Icon(Icons.home_outlined), label: 'Inicio'),
-          NavigationDestination(icon: Icon(Icons.topic), label: "Tópicos"),
+        destinations: [
+          NavigationDestination(selectedIcon: Icon(Icons.home, color: iconColor), icon: Icon(Icons.home_outlined), label: 'Inicio'),
+          NavigationDestination(selectedIcon: Icon(Icons.topic, color: iconColor) ,icon: Icon(Icons.topic_outlined), label: "Tópicos"),
           //NavigationDestination(icon: Badge(child: Icon(Icons.calendar_month)), label: "Calendário"),
-          NavigationDestination(icon: Icon(Icons.tune) , label: "Preferências"),
+          NavigationDestination(selectedIcon: Icon(Icons.tune, color: iconColor) ,icon: Icon(Icons.tune_outlined) , label: "Preferências"),
         ],
       ),
       floatingActionButton: FloatingActionButton(
