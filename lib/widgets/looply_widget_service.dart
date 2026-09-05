@@ -4,7 +4,6 @@ import 'package:home_widget/home_widget.dart';
 import 'package:looply/repository/topic_repository.dart';
 
 import 'looply_widget_mapper.dart';
-import 'looply_widget_models.dart';
 
 /// Camada responsável por toda a comunicação entre a app Flutter e o
 /// Home Screen Widget Android (via `home_widget`).
@@ -12,11 +11,14 @@ import 'looply_widget_models.dart';
 /// Esta é a ÚNICA classe que deve tocar no `home_widget` package. O resto
 /// da app não deve saber como o widget é implementado — apenas chama
 /// [refreshLooplyWidget].
+///
+/// NOTA DE ARQUITETURA: o Dart já não calcula "Hoje"/"Pendentes". Só
+/// envia a lista de datas (em millis, à meia-noite local) das revisões
+/// ainda não concluídas com data <= hoje. A classificação Hoje vs
+/// Pendente é feita nativamente em LooplyWidgetProvider.kt, para poder
+/// ser recalculada no broadcast ACTION_DATE_CHANGED sem precisar de
+/// acordar o Dart.
 class LooplyWidgetService {
-  /// Tem de corresponder ao nome da classe Kotlin `AppWidgetProvider`
-  /// (LooplyWidgetProvider.kt).
-  static const String _androidWidgetName = 'LooplyWidgetProvider';
-
   /// Nome completo (pacote + classe) do LooplyWidgetProvider tal como
   /// declarado no `package ...` no topo de LooplyWidgetProvider.kt.
   ///
@@ -31,16 +33,15 @@ class LooplyWidgetService {
   static const String _qualifiedAndroidWidgetName =
       'com.velami.looply.LooplyWidgetProvider';
 
-  // Chaves partilhadas com o lado nativo (LooplyWidgetProvider.kt).
-  static const String keyTodayCount = 'today_count';
-  static const String keyPendingCount = 'pending_count';
+  // Chave partilhada com o lado nativo (LooplyWidgetProvider.kt).
+  static const String keyPendingDates = 'pending_dates';
 
   final TopicRepository _repository;
 
   LooplyWidgetService(this._repository);
 
-  /// Lê os dados atuais da fonte principal, calcula as métricas e envia-as
-  /// para o widget, pedindo de seguida o seu redesenho.
+  /// Lê os dados atuais da fonte principal, extrai as datas de revisão
+  /// relevantes para o widget e envia-as, pedindo de seguida o redesenho.
   ///
   /// Nunca deve lançar exceções que interrompam o fluxo da app — falhas de
   /// atualização do widget são silenciosamente registadas em log, já que
@@ -48,8 +49,8 @@ class LooplyWidgetService {
   Future<void> refresh() async {
     try {
       final topics = await _repository.getAll();
-      final data = LooplyWidgetMapper.fromTopics(topics);
-      await _saveAndUpdate(data);
+      final dates = LooplyWidgetMapper.pendingRevisionDateMillis(topics);
+      await _saveAndUpdate(dates);
     } catch (e, st) {
       developer.log(
         'Falha ao atualizar o widget do Looply',
@@ -60,11 +61,12 @@ class LooplyWidgetService {
     }
   }
 
-  Future<void> _saveAndUpdate(LooplyWidgetData data) async {
-    await HomeWidget.saveWidgetData<int>(keyTodayCount, data.todayCount);
-    await HomeWidget.saveWidgetData<int>(keyPendingCount, data.pendingCount);
+  Future<void> _saveAndUpdate(List<int> pendingRevisionDatesMillis) async {
+    await HomeWidget.saveWidgetData<String>(
+      keyPendingDates,
+      pendingRevisionDatesMillis.join(','), // string simples "millis,millis,millis"
+    );
     await HomeWidget.updateWidget(
-      androidName: _androidWidgetName,
       qualifiedAndroidName: _qualifiedAndroidWidgetName,
     );
   }

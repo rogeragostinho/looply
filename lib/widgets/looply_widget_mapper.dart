@@ -2,56 +2,46 @@ import 'package:looply/core/enums/revision_status.dart';
 import 'package:looply/model/topic.dart';
 import 'package:looply/utils/util.dart';
 
-import 'looply_widget_models.dart';
-
-/// Converte os dados da fonte principal (lista de [Topic] com as suas
-/// [Revision]) nas duas métricas que o widget mostra: revisões de hoje e
-/// revisões pendentes.
+/// Extrai, da fonte principal (lista de [Topic] com as suas [Revision]),
+/// as datas das revisões relevantes para o widget: revisões ainda não
+/// concluídas cuja data é hoje ou anterior (atrasadas).
 ///
-/// A lógica replica exatamente a usada em `TopicService`/`Util.todayDate()`,
-/// para que o widget nunca fique dessincronizado dos números vistos dentro
-/// da app.
+/// A classificação "Hoje" vs "Pendente" já NÃO é feita aqui — passou a
+/// ser calculada nativamente em LooplyWidgetProvider.kt, comparando estas
+/// datas com o dia atual do dispositivo. Isto permite que o widget se
+/// recalcule sozinho à meia-noite (via broadcast ACTION_DATE_CHANGED),
+/// sem precisar de acordar o Dart.
+///
+/// A normalização de data replica exatamente a usada em
+/// `TopicService`/`Util.todayDate()`, para que o widget nunca fique
+/// dessincronizado dos números vistos dentro da app.
 class LooplyWidgetMapper {
   const LooplyWidgetMapper._();
 
-  static LooplyWidgetData fromTopics(List<Topic> topics) {
-    final today = Util.todayDate();
-
-    int todayCount = 0;
-    int pendingCount = 0;
+  static List<int> pendingRevisionDateMillis(List<Topic> topics) {
+    final dates = <int>[];
 
     for (final topic in topics) {
       final revisions = topic.revisions;
       if (revisions == null) continue;
 
       for (final revision in revisions) {
-        // Normaliza a data da revisão para meia-noite, tal como o resto
-        // da app faz (ver TopicService.updateStatus).
+        final isDone = revision.status == RevisionStatus.done;
+        if (isDone) continue;
+
         final revisionDate = DateTime(
           revision.date.year,
           revision.date.month,
           revision.date.day,
         );
 
-        final isDone = revision.status == RevisionStatus.done;
-
-        // Hoje: data == hoje e ainda não concluída.
-        // (Uma revisão já feita hoje não deve contar como "por fazer hoje".)
-        if (revisionDate.isAtSameMomentAs(today) && !isDone) {
-          todayCount++;
-          continue;
-        }
-
-        // Pendente: data < hoje e ainda não concluída.
-        if (revisionDate.isBefore(today) && !isDone) {
-          pendingCount++;
-        }
+        // Envia TODAS as datas não concluídas — passadas, hoje e futuras.
+        // É o Kotlin que decide o que conta como "hoje"/"pendente" no
+        // momento em que desenha o widget.
+        dates.add(revisionDate.millisecondsSinceEpoch);
       }
     }
 
-    return LooplyWidgetData(
-      todayCount: todayCount,
-      pendingCount: pendingCount,
-    );
+    return dates;
   }
 }

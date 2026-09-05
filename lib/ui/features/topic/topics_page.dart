@@ -17,6 +17,7 @@ class _TopicsPageState extends State<TopicsPage> {
   @override
   Widget build(BuildContext context) {
     final topicVM = context.watch<TopicViewModel>();
+    //topicVM.loadTopics();
 
     final filteredTopics = topicVM.topics.where((topic) {
       if (selectedTagIds.isEmpty) return true;
