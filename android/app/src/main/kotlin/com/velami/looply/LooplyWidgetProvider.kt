@@ -95,6 +95,21 @@ class LooplyWidgetProvider : AppWidgetProvider() {
             val views = RemoteViews(context.packageName, R.layout.looply_widget)
             views.setTextViewText(R.id.widget_today_value, todayCount.toString())
             views.setTextViewText(R.id.widget_pending_value, pendingCount.toString())
+
+            val launchIntent = context.packageManager
+                .getLaunchIntentForPackage(context.packageName)?.apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
+
+            val pendingIntent = PendingIntent.getActivity(
+                context,
+                0,
+                launchIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            views.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
+
             appWidgetManager.updateAppWidget(id, views)
         }
 

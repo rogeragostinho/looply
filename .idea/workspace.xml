@@ -32,18 +32,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="029a55f0-062a-45ce-952e-f3cc2ba4db73" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/android/app/src/main/res/values-night/colors.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/android/app/src/main/res/values/colors.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/src/main/kotlin/com/velami/looply/LooplyWidgetProvider.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/kotlin/com/velami/looply/LooplyWidgetProvider.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable/looply_widget_background.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/drawable/looply_widget_background.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/src/main/res/layout/looply_widget.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/layout/looply_widget.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/theme/app_theme.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/theme/app_theme.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/my_app.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/my_app.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/ui/core/widgets/app_scaffold.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/core/widgets/app_scaffold.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/ui/features/topic/add_topic_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/features/topic/add_topic_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/ui/features/topic/topic_details_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/features/topic/topic_details_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/ui/features/topic/widgets/topic_name_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/features/topic/widgets/topic_name_dialog.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
