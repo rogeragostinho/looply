@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:looply/service/notification_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationViewModel extends ChangeNotifier {
@@ -25,6 +26,16 @@ class NotificationViewModel extends ChangeNotifier {
   Future<void> setEnabled(bool value) async {
     _enabled = value;
     notifyListeners();
+
+    if (value) {
+      final service = NotificationService();
+      await service.requestPermission(); // POST_NOTIFICATIONS
+
+      if (!await service.canScheduleExactAlarms()) {
+        await Permission.scheduleExactAlarm.request();
+      }
+    }
+
     await _save();
   }
 

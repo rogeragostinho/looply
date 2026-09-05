@@ -6,17 +6,14 @@ import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
-  // Instância singleton — só existe um NotificationService na app toda
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
   NotificationService._internal();
 
   final FlutterLocalNotificationsPlugin _plugin =
-      FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin();
 
-  // Chama este método uma vez no main(), antes do runApp()
   Future<void> init() async {
-    // Necessário para agendar por timezone (ex: hora local de Angola)
     tz_data.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('Africa/Lagos'));
 
@@ -37,48 +34,55 @@ class NotificationService {
 
     await _plugin.initialize(settings: initSettings);
 
-    // Cria o canal Android (obrigatório no Android 8+)
     await _createAndroidChannel();
   }
 
+  // ── ALTERADO: agora cria os dois canais, não só o 'looply_daily' ──
   Future<void> _createAndroidChannel() async {
-    const channel = AndroidNotificationChannel(
-      'looply_daily', // ID único do canal
-      'Revisões diárias', // Nome visível nas definições do telemóvel
+    const dailyChannel = AndroidNotificationChannel(
+      'looply_daily',
+      'Revisões diárias',
       description: 'Lembrete diário para fazeres as tuas revisões no Looply',
       importance: Importance.high,
     );
 
-    await _plugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.createNotificationChannel(channel);
-  }
+    const testChannel = AndroidNotificationChannel(
+      'looply_daily_test',
+      'Testes',
+      description: 'Canal usado só para testar notificações',
+      importance: Importance.max,
+    );
 
-  // Pede permissão ao utilizador (Android 13+ e iOS)
+    final plugin = _plugin.resolvePlatformSpecificImplementation
+    <AndroidFlutterLocalNotificationsPlugin>();
+
+    await plugin?.createNotificationChannel(dailyChannel);
+    await plugin?.createNotificationChannel(testChannel);
+  }
+  // ────────────────────────────────────────────────────────────────
+
   Future<bool> requestPermission() async {
     final android = _plugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation
+    <AndroidFlutterLocalNotificationsPlugin
         >();
 
     final granted = await android?.requestNotificationsPermission();
     return granted ?? false;
   }
 
-  // Agenda uma notificação diária a uma hora fixa
   Future<void> scheduleDailyReminder({
     required int hour,
     required int minute,
   }) async {
-    // Cancela qualquer agendamento anterior com o mesmo ID
     await _plugin.cancel(id: 1);
 
+    final canExact = await canScheduleExactAlarms();
+
     await _plugin.zonedSchedule(
-      id: 1, // ID da notificação (1 = lembrete diário)
-      title: 'Hora de rever! 🧠', // Título
-      body: 'Tens cards à tua espera no Looply.', // Corpo
+      id: 1,
+      title: 'Hora de rever! 🧠',
+      body: 'Tens cards à tua espera no Looply.',
       scheduledDate: _nextInstanceOfTime(hour, minute),
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
@@ -89,17 +93,17 @@ class NotificationService {
         ),
         iOS: DarwinNotificationDetails(),
       ),
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime, // Repete todos os dias
+      androidScheduleMode: canExact
+          ? AndroidScheduleMode.exactAllowWhileIdle
+          : AndroidScheduleMode.inexactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time,
     );
   }
 
-  // Cancela o lembrete diário
   Future<void> cancelDailyReminder() async {
     await _plugin.cancel(id: 1);
   }
 
-  // Calcula o próximo momento em que a hora pedida vai ocorrer
   tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
     final now = tz.TZDateTime.now(tz.local);
     var scheduled = tz.TZDateTime(
@@ -111,7 +115,6 @@ class NotificationService {
       minute,
     );
 
-    // Se a hora de hoje já passou, agenda para amanhã
     if (scheduled.isBefore(now)) {
       scheduled = scheduled.add(const Duration(days: 1));
     }
@@ -121,14 +124,13 @@ class NotificationService {
 
   Future<bool> canScheduleExactAlarms() async {
     final android = _plugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation
+    <AndroidFlutterLocalNotificationsPlugin
         >();
     return await android?.canScheduleExactNotifications() ?? false;
   }
 
   Future<void> scheduleTestNotificationViaTimer() async {
-
     final canExact = await _plugin
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.canScheduleExactNotifications();
@@ -142,21 +144,24 @@ class NotificationService {
     });
   }
 
-  // Teste
+  // ── ALTERADO: volta a usar 'looply_daily_test', agora que o canal existe ──
   Future<void> scheduleTestNotification() async {
-    // Permissão de alarme exacto (Android 12+)
+    final notifStatus = await Permission.notification.status;
+    print('📛 Permissão de notificação: $notifStatus');
+
+    if (!notifStatus.isGranted) {
+      final result = await Permission.notification.request();
+      print('📛 Resultado do pedido: $result');
+    }
+
     if (!await Permission.scheduleExactAlarm.isGranted) {
       await Permission.scheduleExactAlarm.request();
     }
 
-    // Excluir a app da otimização de bateria (MIUI, EMUI, etc. bloqueiam sem isto)
-    if (!await Permission.ignoreBatteryOptimizations.isGranted) {
-      await Permission.ignoreBatteryOptimizations.request();
-    }
+    final canExact = await canScheduleExactAlarms();
+    print('🔔 Pode agendar exacto: $canExact');
 
-    final now = tz.TZDateTime.now(tz.local);
-    final scheduled = now.add(const Duration(seconds: 5));
-
+    final scheduled = tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10));
     print('🔔 A agendar para: $scheduled');
 
     await _plugin.zonedSchedule(
@@ -167,19 +172,19 @@ class NotificationService {
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           'looply_daily_test',
-          'Revisões diárias',
-          channelDescription: 'Reminder to complete daily habits',
+          'Testes',
           importance: Importance.max,
           priority: Priority.high,
         ),
-        iOS: DarwinNotificationDetails(),
       ),
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+      androidScheduleMode: canExact
+          ? AndroidScheduleMode.exactAllowWhileIdle
+          : AndroidScheduleMode.inexactAllowWhileIdle,
     );
 
     print('✅ Agendado');
   }
+  // ─────────────────────────────────────────────────────────────────────────
 
   Future<void> showInstantNotification() async {
     await _plugin.show(
