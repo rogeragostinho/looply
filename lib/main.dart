@@ -3,6 +3,7 @@ import 'package:looply/db/db_initializer.dart';
 import 'package:looply/my_app.dart';
 import 'package:looply/service/notification_service.dart';
 import 'package:looply/widgets/looply_widget_service.dart';
+import 'package:looply/widgets/looply_widget_scheduler.dart';
 //import 'package:sqflite/sqflite.dart';
 //import 'package:path/path.dart';
 
@@ -15,6 +16,9 @@ void main() async{
   await NotificationService().requestPermission();
 
   refreshLooplyWidget();
+
+  LooplyWidgetScheduler.initialize();
+  await LooplyWidgetScheduler.scheduleMidnightRefresh();
 
   runApp(const MyApp());
 }

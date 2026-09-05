@@ -38,15 +38,15 @@ class LooplyWidgetProvider : AppWidgetProvider() {
         val widgetData = HomeWidgetPlugin.getData(context)
         val todayCount = widgetData.getInt("today_count", 0)
         val pendingCount = widgetData.getInt("pending_count", 0)
-        val allDone = todayCount == 0 && pendingCount == 0
+        //val allDone = todayCount == 0 && pendingCount == 0
 
         val views = RemoteViews(context.packageName, R.layout.looply_widget).apply {
             setTextViewText(R.id.widget_today_value, todayCount.toString())
             setTextViewText(R.id.widget_pending_value, pendingCount.toString())
-            setViewVisibility(
+            /*setViewVisibility(
                 R.id.widget_all_done,
                 if (allDone) View.VISIBLE else View.GONE
-            )
+            )*/
         }
 
         appWidgetManager.updateAppWidget(widgetId, views)

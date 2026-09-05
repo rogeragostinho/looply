@@ -3,10 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
     android:background="@drawable/looply_widget_background"
-    android:padding="16dp">
+    android:padding="8dp">
 
     <!-- Cabeçalho: 📚 Looply -->
+    <!--
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,6 +17,7 @@
         android:textStyle="bold"
         android:textColor="#7C3AED"
         android:layout_marginBottom="10dp" />
+    -->
 
     <!-- Linha: Hoje -->
     <LinearLayout
@@ -66,6 +69,7 @@
     </LinearLayout>
 
     <!-- Mensagem de "tudo em dia", visível apenas quando hoje=0 e pendentes=0 -->
+    <!--
     <TextView
         android:id="@+id/widget_all_done"
         android:layout_width="wrap_content"
@@ -75,5 +79,6 @@
         android:textColor="#66BB6A"
         android:layout_marginTop="8dp"
         android:visibility="gone" />
+    -->
 
 </LinearLayout>
