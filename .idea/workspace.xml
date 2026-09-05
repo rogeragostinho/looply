@@ -32,14 +32,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="029a55f0-062a-45ce-952e-f3cc2ba4db73" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/service/notification_scheduler.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/service/notification_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/service/notification_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/service/topic_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/service/topic_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/ui/features/preference/preferences_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ui/features/preference/preferences_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/viewmodel/notification_view_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/viewmodel/notification_view_model.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/looply.iml" beforeDir="false" afterPath="$PROJECT_DIR$/looply.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,8 +83,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Dart File" />
         <option value="valueResourceFile" />
+        <option value="Class" />
+        <option value="Dart File" />
       </list>
     </option>
   </component>

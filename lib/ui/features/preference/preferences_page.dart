@@ -76,34 +76,37 @@ class PreferencesPage extends StatelessWidget {
             builder: (context, vm, _) {
               if (!vm.loaded) return const SizedBox.shrink();
 
+              final labels = ['Manhã', 'Tarde', 'Noite'];
+
               return Card(
                 margin: EdgeInsets.zero,
                 clipBehavior: Clip.antiAlias,
                 child: Column(
                   children: [
-                    SwitchListTile(
-                      secondary: Icon(
-                        Icons.notifications_outlined,
-                        color: colorScheme.onSurface.withOpacity(0.75),
+                    for (int i = 0; i < vm.slots.length; i++) ...[
+                      if (i > 0) const Divider(height: 1, indent: 56),
+                      SwitchListTile(
+                        secondary: Icon(
+                          Icons.notifications_outlined,
+                          color: colorScheme.onSurface.withOpacity(0.75),
+                        ),
+                        title: Text('Lembrete — ${labels[i]}'),
+                        value: vm.slots[i].enabled,
+                        onChanged: (value) => vm.setSlotEnabled(i, value),
                       ),
-                      title: const Text('Lembrete diário'),
-                      value: vm.enabled,
-                      onChanged: vm.setEnabled,
-                    ),
-                    if (vm.enabled) ...[
-                      const Divider(height: 1, indent: 56),
-                      _SettingsTile(
-                        icon: Icons.schedule_outlined,
-                        label: 'Hora do lembrete',
-                        subtitle: vm.time.format(context),
-                        onTap: () async {
-                          final picked = await showTimePicker(
-                            context: context,
-                            initialTime: vm.time,
-                          );
-                          if (picked != null) vm.setTime(picked);
-                        },
-                      ),
+                      if (vm.slots[i].enabled)
+                        _SettingsTile(
+                          icon: Icons.schedule_outlined,
+                          label: 'Hora do lembrete',
+                          subtitle: vm.slots[i].time.format(context),
+                          onTap: () async {
+                            final picked = await showTimePicker(
+                              context: context,
+                              initialTime: vm.slots[i].time,
+                            );
+                            if (picked != null) vm.setSlotTime(i, picked);
+                          },
+                        ),
                     ],
                   ],
                 ),
@@ -112,7 +115,7 @@ class PreferencesPage extends StatelessWidget {
           ),
 
           // Teste
-          _SettingsTile(
+          /*_SettingsTile(
             icon: Icons.bug_report_outlined,
             label: 'Testar notificação (1 min)',
             onTap: () async {
@@ -128,7 +131,7 @@ class PreferencesPage extends StatelessWidget {
             onTap: () async {
               await NotificationService().showInstantNotification();
             },
-          ),
+          ),*/
         ],
       ),
     );

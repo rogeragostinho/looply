@@ -60,29 +60,32 @@ class NotificationService {
     await plugin?.createNotificationChannel(testChannel);
   }
   // ────────────────────────────────────────────────────────────────
-
   Future<bool> requestPermission() async {
     final android = _plugin
         .resolvePlatformSpecificImplementation
     <AndroidFlutterLocalNotificationsPlugin
-        >();
+    >();
 
     final granted = await android?.requestNotificationsPermission();
     return granted ?? false;
   }
 
-  Future<void> scheduleDailyReminder({
+  // ALTERADO: agora agenda por slot (0, 1, 2), cada um com id próprio
+  Future<void> scheduleSlotReminder({
+    required int slot,
     required int hour,
     required int minute,
   }) async {
-    await _plugin.cancel(id: 1);
+    final id = 10 + slot; // ids 10, 11, 12 — não colidem com o resto (1, 97, 98)
+
+    await _plugin.cancel(id: id);
 
     final canExact = await canScheduleExactAlarms();
 
     await _plugin.zonedSchedule(
-      id: 1,
+      id: id,
       title: 'Hora de rever! 🧠',
-      body: 'Tens cards à tua espera no Looply.',
+      body: 'Tens revisões à tua espera no Looply.',
       scheduledDate: _nextInstanceOfTime(hour, minute),
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
@@ -100,8 +103,8 @@ class NotificationService {
     );
   }
 
-  Future<void> cancelDailyReminder() async {
-    await _plugin.cancel(id: 1);
+  Future<void> cancelSlotReminder(int slot) async {
+    await _plugin.cancel(id: 10 + slot);
   }
 
   tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
@@ -201,5 +204,24 @@ class NotificationService {
       ),
     );
     print('⚡ Notificação imediata enviada');
+  }
+
+  // ADICIONADO: notificação usada pelos 3 slots configuráveis, id dinâmico por slot
+  Future<void> showSlotNotification({required int pendentes}) async {
+    await _plugin.show(
+      id: 200, // um id fixo chega, pois só uma pode estar visível de cada vez por slot
+      title: 'Hora de rever! 🧠',
+      body: pendentes == 1
+          ? 'Tens 1 revisão à tua espera no Looply.'
+          : 'Tens $pendentes revisões à tua espera no Looply.',
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'looply_daily',
+          'Revisões diárias',
+          importance: Importance.high,
+          priority: Priority.high,
+        ),
+      ),
+    );
   }
 }

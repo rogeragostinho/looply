@@ -16,9 +16,6 @@ void main() async{
 
   refreshLooplyWidget();
 
-  //LooplyWidgetScheduler.initialize();
-  //await LooplyWidgetScheduler.scheduleMidnightRefresh();
-
   runApp(const MyApp());
 }
 

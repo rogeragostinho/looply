@@ -114,4 +114,30 @@ class TopicService {
     topic.imagesUrl?.remove(imagePath);
     await _repository.update(topic);
   }
+
+  // ADICIONADO: contagem de revisões pendentes ou já vencidas hoje (para as notificações)
+  Future<int> countDueOrPendingRevisions() async {
+    final topics = await _repository.getAll();
+    final today = Util.todayDate();
+
+    int count = 0;
+    for (var topic in topics) {
+      for (var revision in topic.revisions ?? <Revision>[]) {
+        if (revision.status == RevisionStatus.done) continue;
+
+        final revisionDate = DateTime(
+          revision.date.year,
+          revision.date.month,
+          revision.date.day,
+        );
+
+        // conta se é hoje OU já passou (não conta futuras)
+        if (!revisionDate.isAfter(today)) {
+          count++;
+        }
+      }
+    }
+
+    return count;
+  }
 }
